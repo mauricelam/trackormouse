@@ -12,20 +12,39 @@ interface WheelSample {
   deltaMode: number;
 }
 
+/**
+ * Stateful windowed (statistical) classifier.
+ * Buffers recent events within a sliding window and calculates statistics
+ * on delta variance, two-axis movement, inter-event cadence, and delta modes.
+ */
 export class WindowedClassifier implements WheelClassifier {
   private buffer: WheelSample[] = [];
   private readonly windowSize: number;
   private readonly idleResetMs: number;
 
+  /**
+   * Constructs a new WindowedClassifier.
+   *
+   * @param opts - Configuration options for window size and idle reset timeout.
+   */
   constructor(opts: WindowedClassifierOptions = {}) {
     this.windowSize = opts.windowSize ?? 8;
     this.idleResetMs = opts.idleResetMs ?? 400;
   }
 
+  /**
+   * Clears the event buffer.
+   */
   reset(): void {
     this.buffer = [];
   }
 
+  /**
+   * Records a WheelEvent sample and computes a classification based on buffered events.
+   *
+   * @param e - The WheelEvent to classify.
+   * @returns The aggregated classification result.
+   */
   classify(e: WheelEvent): WheelClassification {
     const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
     const last = this.buffer[this.buffer.length - 1];
@@ -41,10 +60,13 @@ export class WindowedClassifier implements WheelClassifier {
     return this.score();
   }
 
+  /**
+   * Evaluates statistical signals across the current sample buffer.
+   */
   private score(): WheelClassification {
     const n = this.buffer.length;
     if (n < 2) {
-      // Not enough data yet — fall back to a single-event heuristic.
+      // Not enough data yet — fall back to unknown.
       return { device: 'unknown', confidence: 0 };
     }
 

@@ -111,15 +111,15 @@ describe('WheelDetector (Hybrid)', () => {
   });
 
   it('honors minConfidence option', () => {
-    // Set minConfidence high (0.95), windowed returns lower confidence
-    const detector = new WheelDetector(null, { minConfidence: 0.95 });
+    // Set minConfidence higher than max possible windowed confidence (1.0)
+    const detector = new WheelDetector(null, { minConfidence: 1.01 });
     const e1 = createWheelEvent({ deltaY: 2.5, deltaX: 1.5 });
     const e2 = createWheelEvent({ deltaY: 3.5, deltaX: 1.2 });
 
     detector.classify(e1);
     const r2 = detector.classify(e2);
 
-    // Because windowed confidence < 0.95, it degenerates/falls back to heuristic
+    // Because windowed confidence < 1.01, it degenerates/falls back to heuristic
     expect(r2.reasons).toContain('fractional/pixel delta');
     expect(r2.confidence).toBe(0.5);
   });

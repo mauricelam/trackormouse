@@ -1,6 +1,16 @@
 import { WheelClassification, WheelClassifier } from './types.js';
 
+/**
+ * Stateless single-event classifier.
+ * Classifies each `WheelEvent` in isolation using `deltaMode` and integer/step delta checks.
+ */
 export class HeuristicClassifier implements WheelClassifier {
+  /**
+   * Classifies a WheelEvent in isolation.
+   *
+   * @param e - The WheelEvent to classify.
+   * @returns The classification indicating mouse wheel vs trackpad.
+   */
   classify(e: WheelEvent): WheelClassification {
     const DOM_DELTA_LINE = typeof WheelEvent !== 'undefined' ? WheelEvent.DOM_DELTA_LINE : 1;
     if (e.deltaMode === DOM_DELTA_LINE) {
