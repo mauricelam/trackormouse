@@ -4,232 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wheel Device Detector Demo</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --border: #334155;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent-mouse: #38bdf8;
-      --accent-trackpad: #a855f7;
-      --accent-unknown: #64748b;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    p.subtitle {
-      color: var(--muted);
-      font-size: 1rem;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 900px;
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-
-    .card h2 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.5rem;
-    }
-
-    /* Scroll Area */
-    .scroll-area {
-      height: 220px;
-      border: 2px dashed var(--border);
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 1rem;
-      cursor: pointer;
-      user-select: none;
-      transition: border-color 0.2s, background-color 0.2s;
-    }
-
-    .scroll-area:hover {
-      border-color: var(--muted);
-      background-color: rgba(255, 255, 255, 0.02);
-    }
-
-    .scroll-area-icon {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    /* Controls */
-    .control-group {
-      margin-bottom: 1rem;
-    }
-
-    .control-group label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9rem;
-      font-weight: 500;
-      margin-bottom: 0.25rem;
-    }
-
-    .control-group input[type="range"] {
-      width: 100%;
-      accent-color: #3b82f6;
-    }
-
-    .control-group .value {
-      color: var(--muted);
-      font-weight: normal;
-    }
-
-    /* Output Badge */
-    .result-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 9999px;
-      font-size: 1.25rem;
-      font-weight: 600;
-      text-transform: capitalize;
-      margin-bottom: 1rem;
-      background: var(--border);
-    }
-
-    .result-badge.mouse {
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent-mouse);
-      border: 1px solid var(--accent-mouse);
-    }
-
-    .result-badge.trackpad {
-      background: rgba(168, 85, 247, 0.15);
-      color: var(--accent-trackpad);
-      border: 1px solid var(--accent-trackpad);
-    }
-
-    .result-badge.unknown {
-      background: rgba(100, 116, 139, 0.15);
-      color: var(--accent-unknown);
-      border: 1px solid var(--accent-unknown);
-    }
-
-    /* Confidence Bar */
-    .confidence-container {
-      margin-bottom: 1rem;
-    }
-
-    .confidence-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .confidence-bar-bg {
-      width: 100%;
-      height: 8px;
-      background: var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .confidence-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: #3b82f6;
-      transition: width 0.2s ease-out, background-color 0.2s;
-    }
-
-    .reasons-list {
-      list-style: none;
-      font-family: monospace;
-      font-size: 0.85rem;
-      color: var(--muted);
-      background: rgba(0, 0, 0, 0.2);
-      padding: 0.75rem;
-      border-radius: 6px;
-      max-height: 120px;
-      overflow-y: auto;
-    }
-
-    .reasons-list li {
-      margin-bottom: 0.25rem;
-    }
-
-    .reasons-list li:last-child {
-      margin-bottom: 0;
-    }
-
-    /* Simulation Buttons */
-    .sim-buttons {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    .btn {
-      flex: 1;
-      padding: 0.5rem;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: #334155;
-      color: var(--text);
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 0.85rem;
-      transition: background-color 0.2s;
-    }
-
-    .btn:hover {
-      background: #475569;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -239,35 +14,9 @@
   </header>
 
   <div class="container">
-    <!-- Controls & Interactive Area -->
+    <!-- Test & Control Area -->
     <div class="card">
-      <h2>Configuration Params</h2>
-
-      <div class="control-group">
-        <label for="windowSize">
-          Window Size
-          <span class="value" id="windowSizeValue">8</span>
-        </label>
-        <input type="range" id="windowSize" min="2" max="20" value="8">
-      </div>
-
-      <div class="control-group">
-        <label for="idleResetMs">
-          Idle Reset (ms)
-          <span class="value" id="idleResetMsValue">400</span>
-        </label>
-        <input type="range" id="idleResetMs" min="100" max="1000" step="50" value="400">
-      </div>
-
-      <div class="control-group">
-        <label for="minConfidence">
-          Minimum Confidence
-          <span class="value" id="minConfidenceValue">0.00</span>
-        </label>
-        <input type="range" id="minConfidence" min="0" max="1" step="0.05" value="0">
-      </div>
-
-      <h2 style="margin-top: 1.5rem;">Test Area</h2>
+      <h2>Test Area</h2>
       <div id="scrollTarget" class="scroll-area">
         <div class="scroll-area-icon">🖱️ / 🤌</div>
         <p><strong>Scroll / Wheel over this box</strong></p>
@@ -279,13 +28,13 @@
       <div class="sim-buttons">
         <button id="simMouseBtn" class="btn">Simulate Mouse</button>
         <button id="simTrackpadBtn" class="btn">Simulate Trackpad</button>
-        <button id="resetBtn" class="btn" style="background: #991b1b;">Reset State</button>
+        <button id="resetBtn" class="btn" style="background: #991b1b;">Reset</button>
       </div>
     </div>
 
     <!-- Output Display -->
     <div class="card">
-      <h2>Detector Output</h2>
+      <h2>Classifier Output</h2>
 
       <div style="text-align: center; margin-top: 1rem;">
         <div id="deviceBadge" class="result-badge unknown">
@@ -294,33 +43,13 @@
         </div>
       </div>
 
-      <div class="confidence-container">
-        <div class="confidence-label">
-          <span>Confidence</span>
-          <span id="confidenceValue">0%</span>
-        </div>
-        <div class="confidence-bar-bg">
-          <div id="confidenceBar" class="confidence-bar-fill"></div>
-        </div>
-      </div>
-
-      <h3 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--muted);">Decision Signals (Reasons)</h3>
-      <ul id="reasonsList" class="reasons-list">
-        <li>No wheel events received yet</li>
-      </ul>
+      <h3 style="font-size: 0.9rem; margin-top: 1rem; color: var(--muted);">Classifier Debug Stats</h3>
+      <div id="debugInfo" class="debug-info">No wheel events received yet</div>
     </div>
   </div>
 
   <script type="module">
-    import { WheelDetector } from '../src/index.ts';
-
-    // DOM Elements
-    const windowSizeInput = document.getElementById('windowSize');
-    const windowSizeValue = document.getElementById('windowSizeValue');
-    const idleResetMsInput = document.getElementById('idleResetMs');
-    const idleResetMsValue = document.getElementById('idleResetMsValue');
-    const minConfidenceInput = document.getElementById('minConfidence');
-    const minConfidenceValue = document.getElementById('minConfidenceValue');
+    import { WheelClassifier } from '../src/index.ts';
 
     const scrollTarget = document.getElementById('scrollTarget');
     const simMouseBtn = document.getElementById('simMouseBtn');
@@ -330,95 +59,44 @@
     const deviceBadge = document.getElementById('deviceBadge');
     const deviceIcon = document.getElementById('deviceIcon');
     const deviceText = document.getElementById('deviceText');
-    const confidenceValue = document.getElementById('confidenceValue');
-    const confidenceBar = document.getElementById('confidenceBar');
-    const reasonsList = document.getElementById('reasonsList');
+    const debugInfo = document.getElementById('debugInfo');
 
-    let detector = null;
+    let classifier = new WheelClassifier();
 
-    function updateOutput(classification) {
-      if (!classification) {
+    function updateUI() {
+      const device = classifier.inferDeviceType();
+
+      if (!device) {
         deviceBadge.className = 'result-badge unknown';
         deviceIcon.textContent = '❓';
         deviceText.textContent = 'unknown';
-        confidenceValue.textContent = '0%';
-        confidenceBar.style.width = '0%';
-        reasonsList.innerHTML = '<li>No wheel events received yet</li>';
+        debugInfo.textContent = 'No wheel events received yet';
         return;
       }
 
-      const { device, confidence, reasons } = classification;
-
       deviceBadge.className = `result-badge ${device}`;
-      if (device === 'mouse') deviceIcon.textContent = '🖱️';
-      else if (device === 'trackpad') deviceIcon.textContent = '🤌';
-      else deviceIcon.textContent = '❓';
+      if (device === 'mouse') {
+        deviceIcon.textContent = '🖱️';
+      } else if (device === 'trackpad') {
+        deviceIcon.textContent = '🤌';
+      } else {
+        deviceIcon.textContent = '❓';
+      }
 
       deviceText.textContent = device;
-
-      const confPct = Math.round(confidence * 100);
-      confidenceValue.textContent = `${confPct}%`;
-      confidenceBar.style.width = `${confPct}%`;
-
-      if (device === 'mouse') confidenceBar.style.backgroundColor = 'var(--accent-mouse)';
-      else if (device === 'trackpad') confidenceBar.style.backgroundColor = 'var(--accent-trackpad)';
-      else confidenceBar.style.backgroundColor = 'var(--accent-unknown)';
-
-      if (reasons && reasons.length > 0) {
-        reasonsList.innerHTML = reasons.map(r => `<li>• ${r}</li>`).join('');
-      } else {
-        reasonsList.innerHTML = '<li>• None provided</li>';
-      }
+      debugInfo.textContent = classifier.debugString();
     }
 
-    function initDetector() {
-      if (detector) {
-        detector.destroy();
-      }
-
-      const windowSize = parseInt(windowSizeInput.value, 10);
-      const idleResetMs = parseInt(idleResetMsInput.value, 10);
-      const minConfidence = parseFloat(minConfidenceInput.value);
-
-      detector = new WheelDetector(scrollTarget, {
-        windowSize,
-        idleResetMs,
-        minConfidence,
-        onChange: (result) => {
-          updateOutput(result);
-        }
-      });
-    }
-
-    // Config Input Listeners
-    windowSizeInput.addEventListener('input', () => {
-      windowSizeValue.textContent = windowSizeInput.value;
-      initDetector();
-    });
-
-    idleResetMsInput.addEventListener('input', () => {
-      idleResetMsValue.textContent = idleResetMsInput.value;
-      initDetector();
-    });
-
-    minConfidenceInput.addEventListener('input', () => {
-      minConfidenceValue.textContent = parseFloat(minConfidenceInput.value).toFixed(2);
-      initDetector();
-    });
-
-    // Update UI on each wheel event after detector processes it
-    scrollTarget.addEventListener('wheel', () => {
-      if (detector && detector.lastResult) {
-        updateOutput(detector.lastResult);
-      }
+    scrollTarget.addEventListener('wheel', (e) => {
+      classifier.addEvent(e);
+      updateUI();
     }, { passive: true });
 
-    // Simulation Handlers
     simMouseBtn.addEventListener('click', () => {
       const evt = new WheelEvent('wheel', {
-        deltaY: 100,
+        deltaY: 120,
         deltaX: 0,
-        deltaMode: 0,
+        deltaMode: WheelEvent.DOM_DELTA_LINE,
         bubbles: true,
       });
       scrollTarget.dispatchEvent(evt);
@@ -427,20 +105,19 @@
     simTrackpadBtn.addEventListener('click', () => {
       const evt = new WheelEvent('wheel', {
         deltaY: 2.345,
-        deltaX: 1.12,
-        deltaMode: 0,
+        deltaX: 0,
+        deltaMode: WheelEvent.DOM_DELTA_PIXEL,
         bubbles: true,
       });
       scrollTarget.dispatchEvent(evt);
     });
 
     resetBtn.addEventListener('click', () => {
-      if (detector) detector.reset();
-      updateOutput(null);
+      classifier = new WheelClassifier();
+      updateUI();
     });
 
-    // Initialize
-    initDetector();
+    updateUI();
   </script>
 </body>
 </html>
