@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Build example site
-        run: npx vite build examples --outDir dist --base=./
+        run: npx vite build examples --outDir ../dist --emptyOutDir --base=./
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
