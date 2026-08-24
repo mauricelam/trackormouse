@@ -113,10 +113,10 @@ export class WheelClassifier {
     if (this.deltaXEvents > 0) {
       return 'mouse'
     }
-    if (this.deltaYLooksLikeTick === this.numEvents) {
-      return 'mouse'
+    if (this.deltaYLooksLikeTick < this.numEvents) {
+      return 'trackpad'
     }
-    return 'trackpad'
+    return 'mouse'
   }
 
   debugString(): string {
