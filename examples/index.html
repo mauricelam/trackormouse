@@ -103,29 +103,6 @@
       margin-bottom: 0.5rem;
     }
 
-    /* Controls */
-    .control-group {
-      margin-bottom: 1rem;
-    }
-
-    .control-group label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9rem;
-      font-weight: 500;
-      margin-bottom: 0.25rem;
-    }
-
-    .control-group input[type="range"] {
-      width: 100%;
-      accent-color: #3b82f6;
-    }
-
-    .control-group .value {
-      color: var(--muted);
-      font-weight: normal;
-    }
-
     /* Output Badge */
     .result-badge {
       display: inline-flex;
@@ -194,7 +171,7 @@
       background: rgba(0, 0, 0, 0.2);
       padding: 0.75rem;
       border-radius: 6px;
-      max-height: 120px;
+      max-height: 180px;
       overflow-y: auto;
     }
 
@@ -209,12 +186,12 @@
     /* Simulation Buttons */
     .sim-buttons {
       display: flex;
+      flex-direction: column;
       gap: 0.5rem;
       margin-top: 1rem;
     }
 
     .btn {
-      flex: 1;
       padding: 0.5rem;
       border-radius: 6px;
       border: 1px solid var(--border);
@@ -239,35 +216,9 @@
   </header>
 
   <div class="container">
-    <!-- Controls & Interactive Area -->
+    <!-- Interactive Area -->
     <div class="card">
-      <h2>Configuration Params</h2>
-
-      <div class="control-group">
-        <label for="windowSize">
-          Window Size
-          <span class="value" id="windowSizeValue">8</span>
-        </label>
-        <input type="range" id="windowSize" min="2" max="20" value="8">
-      </div>
-
-      <div class="control-group">
-        <label for="idleResetMs">
-          Idle Reset (ms)
-          <span class="value" id="idleResetMsValue">400</span>
-        </label>
-        <input type="range" id="idleResetMs" min="100" max="1000" step="50" value="400">
-      </div>
-
-      <div class="control-group">
-        <label for="minConfidence">
-          Minimum Confidence
-          <span class="value" id="minConfidenceValue">0.00</span>
-        </label>
-        <input type="range" id="minConfidence" min="0" max="1" step="0.05" value="0">
-      </div>
-
-      <h2 style="margin-top: 1.5rem;">Test Area</h2>
+      <h2>Test Area</h2>
       <div id="scrollTarget" class="scroll-area">
         <div class="scroll-area-icon">🖱️ / 🤌</div>
         <p><strong>Scroll / Wheel over this box</strong></p>
@@ -277,8 +228,8 @@
       </div>
 
       <div class="sim-buttons">
-        <button id="simMouseBtn" class="btn">Simulate Mouse</button>
-        <button id="simTrackpadBtn" class="btn">Simulate Trackpad</button>
+        <button id="simMouseBtn" class="btn">Simulate Mouse Wheel Event</button>
+        <button id="simTrackpadBtn" class="btn">Simulate Trackpad Wheel Event</button>
         <button id="resetBtn" class="btn" style="background: #991b1b;">Reset State</button>
       </div>
     </div>
@@ -296,7 +247,7 @@
 
       <div class="confidence-container">
         <div class="confidence-label">
-          <span>Confidence</span>
+          <span>Status</span>
           <span id="confidenceValue">0%</span>
         </div>
         <div class="confidence-bar-bg">
@@ -304,7 +255,7 @@
         </div>
       </div>
 
-      <h3 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--muted);">Decision Signals (Reasons)</h3>
+      <h3 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--muted);">Classifier Metrics</h3>
       <ul id="reasonsList" class="reasons-list">
         <li>No wheel events received yet</li>
       </ul>
@@ -312,15 +263,7 @@
   </div>
 
   <script type="module">
-    import { WheelDetector } from '../src/index.ts';
-
-    // DOM Elements
-    const windowSizeInput = document.getElementById('windowSize');
-    const windowSizeValue = document.getElementById('windowSizeValue');
-    const idleResetMsInput = document.getElementById('idleResetMs');
-    const idleResetMsValue = document.getElementById('idleResetMsValue');
-    const minConfidenceInput = document.getElementById('minConfidence');
-    const minConfidenceValue = document.getElementById('minConfidenceValue');
+    import { WheelClassifier } from '../src/index.ts';
 
     const scrollTarget = document.getElementById('scrollTarget');
     const simMouseBtn = document.getElementById('simMouseBtn');
@@ -334,20 +277,10 @@
     const confidenceBar = document.getElementById('confidenceBar');
     const reasonsList = document.getElementById('reasonsList');
 
-    let detector = null;
+    let classifier = new WheelClassifier();
 
-    function updateOutput(classification) {
-      if (!classification) {
-        deviceBadge.className = 'result-badge unknown';
-        deviceIcon.textContent = '❓';
-        deviceText.textContent = 'unknown';
-        confidenceValue.textContent = '0%';
-        confidenceBar.style.width = '0%';
-        reasonsList.innerHTML = '<li>No wheel events received yet</li>';
-        return;
-      }
-
-      const { device, confidence, reasons } = classification;
+    function updateOutput() {
+      const device = classifier.inferDeviceType() || 'unknown';
 
       deviceBadge.className = `result-badge ${device}`;
       if (device === 'mouse') deviceIcon.textContent = '🖱️';
@@ -356,72 +289,43 @@
 
       deviceText.textContent = device;
 
-      const confPct = Math.round(confidence * 100);
-      confidenceValue.textContent = `${confPct}%`;
-      confidenceBar.style.width = `${confPct}%`;
+      const hasDevice = device !== 'unknown';
+      confidenceValue.textContent = hasDevice ? '100%' : '0%';
+      confidenceBar.style.width = hasDevice ? '100%' : '0%';
 
       if (device === 'mouse') confidenceBar.style.backgroundColor = 'var(--accent-mouse)';
       else if (device === 'trackpad') confidenceBar.style.backgroundColor = 'var(--accent-trackpad)';
       else confidenceBar.style.backgroundColor = 'var(--accent-unknown)';
 
-      if (reasons && reasons.length > 0) {
-        reasonsList.innerHTML = reasons.map(r => `<li>• ${r}</li>`).join('');
+      if (classifier.numEvents > 0) {
+        reasonsList.innerHTML = `
+          <li>• Total events: ${classifier.numEvents}</li>
+          <li>• Delta X events: ${classifier.deltaXEvents}</li>
+          <li>• Delta Y looks like tick: ${classifier.deltaYLooksLikeTick}</li>
+          <li>• Delta Y fractional: ${classifier.deltaYFractional}</li>
+          <li>• Delta mode not pixels: ${classifier.deltaModeNotPixels}</li>
+        `;
       } else {
-        reasonsList.innerHTML = '<li>• None provided</li>';
+        reasonsList.innerHTML = '<li>No wheel events received yet</li>';
       }
     }
 
-    function initDetector() {
-      if (detector) {
-        detector.destroy();
-      }
-
-      const windowSize = parseInt(windowSizeInput.value, 10);
-      const idleResetMs = parseInt(idleResetMsInput.value, 10);
-      const minConfidence = parseFloat(minConfidenceInput.value);
-
-      detector = new WheelDetector(scrollTarget, {
-        windowSize,
-        idleResetMs,
-        minConfidence,
-        onChange: (result) => {
-          updateOutput(result);
-        }
-      });
+    function handleWheel(e) {
+      classifier.addEvent(e);
+      updateOutput();
     }
 
-    // Config Input Listeners
-    windowSizeInput.addEventListener('input', () => {
-      windowSizeValue.textContent = windowSizeInput.value;
-      initDetector();
-    });
-
-    idleResetMsInput.addEventListener('input', () => {
-      idleResetMsValue.textContent = idleResetMsInput.value;
-      initDetector();
-    });
-
-    minConfidenceInput.addEventListener('input', () => {
-      minConfidenceValue.textContent = parseFloat(minConfidenceInput.value).toFixed(2);
-      initDetector();
-    });
-
-    // Update UI on each wheel event after detector processes it
-    scrollTarget.addEventListener('wheel', () => {
-      if (detector && detector.lastResult) {
-        updateOutput(detector.lastResult);
-      }
-    }, { passive: true });
+    scrollTarget.addEventListener('wheel', handleWheel, { passive: true });
 
     // Simulation Handlers
     simMouseBtn.addEventListener('click', () => {
       const evt = new WheelEvent('wheel', {
-        deltaY: 100,
+        deltaY: 120,
         deltaX: 0,
         deltaMode: 0,
         bubbles: true,
       });
-      scrollTarget.dispatchEvent(evt);
+      handleWheel(evt);
     });
 
     simTrackpadBtn.addEventListener('click', () => {
@@ -431,16 +335,16 @@
         deltaMode: 0,
         bubbles: true,
       });
-      scrollTarget.dispatchEvent(evt);
+      handleWheel(evt);
     });
 
     resetBtn.addEventListener('click', () => {
-      if (detector) detector.reset();
-      updateOutput(null);
+      classifier = new WheelClassifier();
+      updateOutput();
     });
 
     // Initialize
-    initDetector();
+    updateOutput();
   </script>
 </body>
 </html>
