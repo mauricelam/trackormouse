@@ -89,9 +89,9 @@ export class WheelClassifier {
       this.deltaYFractional++;
     }
 
-    if (isWindows() && Math.abs(dy) % WINDOWS_WHEEL_DELTA === 0) {
+    if (isWindows() && Math.abs(dy) > 0 && Math.abs(dy) % WINDOWS_WHEEL_DELTA === 0) {
       this.deltaYLooksLikeTick++;
-    } else if (isMacOS() && Math.abs(dy) % CHROMIUM_MAC_TICK === 0) {
+    } else if (isMacOS() && Math.abs(dy) > 0 && Math.abs(dy) % CHROMIUM_MAC_TICK === 0) {
       this.deltaYLooksLikeTick++;
     }
   }
@@ -111,7 +111,7 @@ export class WheelClassifier {
       return 'trackpad'
     }
     if (this.deltaXEvents > 0) {
-      return 'mouse'
+      return 'trackpad'
     }
     if (this.deltaYLooksLikeTick < this.numEvents) {
       return 'trackpad'

@@ -135,34 +135,6 @@
       border: 1px solid var(--accent-unknown);
     }
 
-    /* Confidence Bar */
-    .confidence-container {
-      margin-bottom: 1rem;
-    }
-
-    .confidence-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .confidence-bar-bg {
-      width: 100%;
-      height: 8px;
-      background: var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .confidence-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: #3b82f6;
-      transition: width 0.2s ease-out, background-color 0.2s;
-    }
-
     .reasons-list {
       list-style: none;
       font-family: monospace;
@@ -245,16 +217,6 @@
         </div>
       </div>
 
-      <div class="confidence-container">
-        <div class="confidence-label">
-          <span>Status</span>
-          <span id="confidenceValue">0%</span>
-        </div>
-        <div class="confidence-bar-bg">
-          <div id="confidenceBar" class="confidence-bar-fill"></div>
-        </div>
-      </div>
-
       <h3 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--muted);">Classifier Metrics</h3>
       <ul id="reasonsList" class="reasons-list">
         <li>No wheel events received yet</li>
@@ -273,8 +235,6 @@
     const deviceBadge = document.getElementById('deviceBadge');
     const deviceIcon = document.getElementById('deviceIcon');
     const deviceText = document.getElementById('deviceText');
-    const confidenceValue = document.getElementById('confidenceValue');
-    const confidenceBar = document.getElementById('confidenceBar');
     const reasonsList = document.getElementById('reasonsList');
 
     let classifier = new WheelClassifier();
@@ -290,12 +250,6 @@
       deviceText.textContent = device;
 
       const hasDevice = device !== 'unknown';
-      confidenceValue.textContent = hasDevice ? '100%' : '0%';
-      confidenceBar.style.width = hasDevice ? '100%' : '0%';
-
-      if (device === 'mouse') confidenceBar.style.backgroundColor = 'var(--accent-mouse)';
-      else if (device === 'trackpad') confidenceBar.style.backgroundColor = 'var(--accent-trackpad)';
-      else confidenceBar.style.backgroundColor = 'var(--accent-unknown)';
 
       if (classifier.numEvents > 0) {
         reasonsList.innerHTML = `

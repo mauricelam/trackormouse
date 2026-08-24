@@ -100,7 +100,7 @@ describe('WheelClassifier', () => {
     it('classifies a stream with non-zero deltaX as mouse wheel tilt', () => {
       stubChromiumWindows();
       const classifier = new WheelClassifier();
-      // Mouse wheel tilt generates deltaX events
+      // Mouse wheel tilt generates deltaX events with dy = 0
       const events = [
         { dx: 120, dy: 0 },
         { dx: 120, dy: 0 },
@@ -112,7 +112,19 @@ describe('WheelClassifier', () => {
       }
 
       expect(classifier.numEvents).toBe(3);
-      expect(classifier.inferDeviceType(), classifier.debugString()).toBe('mouse');
+      expect(classifier.inferDeviceType(), classifier.debugString()).toBe('trackpad');
+    });
+
+    it('does not treat dy = 0 as a mouse tick on Windows or macOS', () => {
+      stubChromiumWindows();
+      const windowsClassifier = new WheelClassifier();
+      windowsClassifier.addEvent(createWheelEvent({ deltaY: 0, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
+      expect(windowsClassifier.inferDeviceType(), windowsClassifier.debugString()).toBe('trackpad');
+
+      stubChromiumMacOS();
+      const macClassifier = new WheelClassifier();
+      macClassifier.addEvent(createWheelEvent({ deltaY: 0, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
+      expect(macClassifier.inferDeviceType(), macClassifier.debugString()).toBe('trackpad');
     });
 
     it('identifies trackpad when integer deltas do not align with platform tick quantum in a stream', () => {

@@ -35,6 +35,6 @@ The default classification heuristic used by `inferDeviceType()` is as follows:
 
 1. Any events with deltaMode != PIXEL → `'mouse'`
 2. Any events with fractional deltaY → `'trackpad'`
-3. Any events with non-zero deltaX → `'mouse'`
+3. Any events with non-zero deltaX → `'trackpad'`
 4. Any events with deltaY that doesn't look like a tick → `'trackpad'`
 5. Otherwise → `'mouse'`

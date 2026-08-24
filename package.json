@@ -1,5 +1,5 @@
 {
-  "name": "wheel-device-detector",
+  "name": "trackormouse",
   "version": "1.0.0",
   "description": "Detect mouse wheel vs trackpad input",
   "type": "module",
@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
-    "dev": "vite"
+    "dev": "vite examples"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
