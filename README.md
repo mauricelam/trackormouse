@@ -30,6 +30,7 @@ For example, some use cases may want to set a minimum number of events before ch
 * `deltaYFractional`: Number of events where the deltaY contains non-integer values.
 * `deltaModeNotPixels`: Number of events where the deltaMode is not pixels.
 * `numEvents`: Total number of accumulated events.
+* `peakEventsPerSec`: Peak number of events received within a 1-second window.
 
 The default classification heuristic used by `inferDeviceType()` is as follows:
 
