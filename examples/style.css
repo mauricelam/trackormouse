@@ -123,27 +123,7 @@ p.subtitle {
   border: 1px solid var(--accent-unknown);
 }
 
-.reasons-list {
-  list-style: none;
-  font-family: monospace;
-  font-size: 0.85rem;
-  color: var(--muted);
-  background: rgba(0, 0, 0, 0.2);
-  padding: 0.75rem;
-  border-radius: 6px;
-  max-height: 180px;
-  overflow-y: auto;
-}
-
-.reasons-list li {
-  margin-bottom: 0.25rem;
-}
-
-.reasons-list li:last-child {
-  margin-bottom: 0;
-}
-
-/* Rules List & Highlights */
+/* Combined Metrics & Rules List */
 .rules-list {
   display: flex;
   flex-direction: column;
@@ -210,9 +190,24 @@ p.subtitle {
   gap: 0.15rem;
 }
 
+.rule-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .rule-name {
   font-family: monospace;
   font-weight: 600;
+}
+
+.rule-value {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
 }
 
 .rule-desc {

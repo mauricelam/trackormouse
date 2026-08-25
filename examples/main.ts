@@ -6,7 +6,6 @@ const autoResetCheckbox = document.getElementById('autoResetCheckbox') as HTMLIn
 
 const deviceBadge = document.getElementById('deviceBadge') as HTMLElement;
 const deviceText = document.getElementById('deviceText') as HTMLElement;
-const reasonsList = document.getElementById('reasonsList') as HTMLElement;
 const rulesList = document.getElementById('rulesList') as HTMLElement;
 
 let classifier = new WheelClassifier();
@@ -42,21 +41,12 @@ function updateOutput() {
   deviceText.textContent = device;
 
   if (classifier.numEvents > 0) {
-    reasonsList.innerHTML = `
-      <li>Total events: ${classifier.numEvents}</li>
-      <li>Peak events/sec: ${classifier.peakEventsPerSec}</li>
-      <li>Delta X events: ${classifier.deltaXEvents}</li>
-      <li>Delta X & Y events: ${classifier.deltaXAndYEvents}</li>
-      <li>Delta Y looks like tick: ${classifier.deltaYLooksLikeTick}</li>
-      <li>Delta Y fractional: ${classifier.deltaYFractional}</li>
-      <li>Delta mode not pixels: ${classifier.deltaModeNotPixels}</li>
-    `;
-
-    // Definition of all inference rules evaluated by WheelClassifier
+    // Combined list of classifier metrics and inference rules
     const rules = [
       {
         id: 'deltaModeNotPixels',
         name: 'deltaModeNotPixels',
+        value: `${classifier.deltaModeNotPixels}`,
         description: 'deltaMode is DOM_DELTA_LINE (>0)',
         deviceType: 'mouse' as const,
         active: classifier.deltaModeNotPixels > 0,
@@ -64,6 +54,7 @@ function updateOutput() {
       {
         id: 'deltaXAndYEvents',
         name: 'deltaXAndYEvents',
+        value: `${classifier.deltaXAndYEvents} / ${classifier.numEvents} events`,
         description: 'Simultaneous deltaX and deltaY (>0)',
         deviceType: 'trackpad' as const,
         active: classifier.deltaXAndYEvents > 0,
@@ -71,6 +62,7 @@ function updateOutput() {
       {
         id: 'deltaXEvents',
         name: 'deltaXEvents',
+        value: `${classifier.deltaXEvents} / ${classifier.numEvents} events`,
         description: 'Horizontal deltaX present (>0)',
         deviceType: 'trackpad' as const,
         active: classifier.deltaXEvents > 0,
@@ -78,6 +70,7 @@ function updateOutput() {
       {
         id: 'deltaYLooksLikeTick',
         name: 'deltaYLooksLikeTick',
+        value: `${classifier.deltaYLooksLikeTick} / ${classifier.numEvents} events`,
         description: 'All deltaY values match wheel tick quantum (100%)',
         deviceType: 'mouse' as const,
         active: classifier.deltaYLooksLikeTick === classifier.numEvents,
@@ -85,6 +78,7 @@ function updateOutput() {
       {
         id: 'peakEventsPerSec',
         name: 'peakEventsPerSec',
+        value: `${classifier.peakEventsPerSec} / sec`,
         description: 'High frequency scroll (>9 events/sec)',
         deviceType: 'trackpad' as const,
         active: classifier.peakEventsPerSec > 9,
@@ -92,6 +86,7 @@ function updateOutput() {
       {
         id: 'default',
         name: 'default',
+        value: `Total events: ${classifier.numEvents}`,
         description: 'Fallback default rule',
         deviceType: 'mouse' as const,
         active: true,
@@ -110,7 +105,10 @@ function updateOutput() {
       return `
         <div class="${classes}">
           <div class="rule-info">
-            <span class="rule-name">${rule.name}</span>
+            <div class="rule-name-row">
+              <span class="rule-name">${rule.name}</span>
+              <span class="rule-value">${rule.value}</span>
+            </div>
             <span class="rule-desc">${rule.description}</span>
           </div>
           <div class="rule-tags">
@@ -121,7 +119,6 @@ function updateOutput() {
       `;
     }).join('');
   } else {
-    reasonsList.innerHTML = '<li>No wheel events received yet</li>';
     rulesList.innerHTML = '<div class="empty-rules">No wheel events received yet</div>';
   }
 }
