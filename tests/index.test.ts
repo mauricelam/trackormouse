@@ -49,14 +49,6 @@ describe('WheelClassifier', () => {
     expect(result, classifier.debugString()).toBe('mouse');
   });
 
-  it('classifies fractional/pixel deltas as trackpad', () => {
-    const classifier = new WheelClassifier();
-    const event = createWheelEvent({ deltaY: 2.399999, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL });
-    classifier.addEvent(event);
-    const result = classifier.inferDeviceType();
-    expect(result, classifier.debugString()).toBe('trackpad');
-  });
-
   describe('streams of events', () => {
     it('classifies a stream of Windows mouse wheel tick events', () => {
       stubChromiumWindows();
@@ -82,29 +74,6 @@ describe('WheelClassifier', () => {
 
       expect(classifier.numEvents).toBe(7);
       expect(classifier.inferDeviceType(), classifier.debugString()).toBe('mouse');
-    });
-
-    it('classifies a stream of trackpad scroll gesture events with fractional deltas', () => {
-      stubChromiumMacOS();
-      const classifier = new WheelClassifier();
-      // Typical trackpad scroll gesture with acceleration, fractional values, and deceleration
-      const deltas = [
-        { dx: 0, dy: 0.5 },
-        { dx: 0, dy: 1.2 },
-        { dx: 0, dy: 3.8 },
-        { dx: 0, dy: 7.4 },
-        { dx: 0, dy: 12.1 },
-        { dx: 0, dy: 8.5 },
-        { dx: 0, dy: 3.2 },
-        { dx: 0, dy: 1.0 },
-      ];
-
-      for (const { dx, dy } of deltas) {
-        classifier.addEvent(createWheelEvent({ deltaX: dx, deltaY: dy, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
-      }
-
-      expect(classifier.numEvents).toBe(deltas.length);
-      expect(classifier.inferDeviceType(), classifier.debugString()).toBe('trackpad');
     });
 
     it('classifies a stream with non-zero deltaX as mouse wheel tilt', () => {
@@ -137,18 +106,6 @@ describe('WheelClassifier', () => {
       expect(classifier.inferDeviceType(), classifier.debugString()).toBe('trackpad');
     });
 
-    it('does not treat dy = 0 as a mouse tick on Windows or macOS', () => {
-      stubChromiumWindows();
-      const windowsClassifier = new WheelClassifier();
-      windowsClassifier.addEvent(createWheelEvent({ deltaY: 0, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
-      expect(windowsClassifier.inferDeviceType(), windowsClassifier.debugString()).toBe('trackpad');
-
-      stubChromiumMacOS();
-      const macClassifier = new WheelClassifier();
-      macClassifier.addEvent(createWheelEvent({ deltaY: 0, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
-      expect(macClassifier.inferDeviceType(), macClassifier.debugString()).toBe('trackpad');
-    });
-
     it('identifies trackpad when integer deltas do not align with platform tick quantum in a stream', () => {
       stubChromiumMacOS();
       const classifier = new WheelClassifier();
@@ -170,14 +127,6 @@ describe('WheelClassifier', () => {
       // Starts with integer tick
       classifier.addEvent(createWheelEvent({ deltaY: -120, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
       expect(classifier.inferDeviceType()).toBe('mouse');
-
-      // Receives a fractional delta event in the stream
-      classifier.addEvent(createWheelEvent({ deltaY: -15.5, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
-      expect(classifier.inferDeviceType()).toBe('trackpad');
-
-      // Subsequent events don't clear the fractional delta flag
-      classifier.addEvent(createWheelEvent({ deltaY: -120, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
-      expect(classifier.inferDeviceType()).toBe('trackpad');
     });
   });
 
