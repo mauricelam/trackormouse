@@ -52,6 +52,10 @@ export class WheelClassifier {
    */
   deltaXEvents: number = 0;
   /**
+   * Number of events that contain both non-zero delta X and non-zero delta Y at the same time.
+   */
+  deltaXAndYEvents: number = 0;
+  /**
    * Number of events where the deltaY looks like a wheel tick.
    */
   deltaYLooksLikeTick: number = 0;
@@ -100,6 +104,10 @@ export class WheelClassifier {
       this.deltaXEvents++;
     }
 
+    if (dx !== 0 && dy !== 0) {
+      this.deltaXAndYEvents++;
+    }
+
     if (!Number.isInteger(dy)) {
       this.deltaYFractional++;
     }
@@ -116,22 +124,33 @@ export class WheelClassifier {
    * @returns The inferred device type, or null if it cannot be determined.
    */
   inferDeviceType(): InputDevice | null {
+    return this.inferDeviceTypeWithReason()?.deviceType || null
+  }
+
+  inferDeviceTypeWithReason(): { deviceType: InputDevice; reason: string } | null {
     if (this.numEvents === 0) {
       return null
     }
     if (this.deltaModeNotPixels > 0) {
-      return 'mouse'
+      return { deviceType: 'mouse', reason: 'deltaModeNotPixels' }
+    }
+    if (this.deltaXAndYEvents > 0) {
+      return { deviceType: 'trackpad', reason: 'deltaXAndYEvents' }
     }
     if (this.deltaXEvents > 0) {
-      return 'trackpad'
+      return { deviceType: 'trackpad', reason: 'deltaXEvents' }
     }
-    if (this.deltaYLooksLikeTick < this.numEvents) {
-      return 'trackpad'
+    if (this.deltaYLooksLikeTick === this.numEvents) {
+      return { deviceType: 'mouse', reason: 'deltaYLooksLikeTick' }
     }
-    return 'mouse'
+    if (this.peakEventsPerSec > 9) {
+      // Macs send trackpad scroll events at 60fps
+      return { deviceType: 'trackpad', reason: 'peakEventsPerSec' }
+    }
+    return { deviceType: 'mouse', reason: 'default' }
   }
 
   debugString(): string {
-    return `deltaXEvents: ${this.deltaXEvents}, deltaYLooksLikeTick: ${this.deltaYLooksLikeTick}, deltaYFractional: ${this.deltaYFractional}, deltaModeNotPixels: ${this.deltaModeNotPixels}, numEvents: ${this.numEvents}, peakEventsPerSec: ${this.peakEventsPerSec}`
+    return `deltaXEvents: ${this.deltaXEvents}, deltaXAndYEvents: ${this.deltaXAndYEvents}, deltaYLooksLikeTick: ${this.deltaYLooksLikeTick}, deltaYFractional: ${this.deltaYFractional}, deltaModeNotPixels: ${this.deltaModeNotPixels}, numEvents: ${this.numEvents}, peakEventsPerSec: ${this.peakEventsPerSec}`
   }
 }
