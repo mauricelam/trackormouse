@@ -128,6 +128,9 @@ export class WheelClassifier {
   }
 
   inferDeviceTypeWithReason(): { deviceType: InputDevice; reason: string } | null {
+    // Note: If you update or add inference rules in this method, please also update
+    // the example demo UI (examples/main.ts and examples/index.html) to keep the rule
+    // highlights and explanations in sync.
     if (this.numEvents === 0) {
       return null
     }
