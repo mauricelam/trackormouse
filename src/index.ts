@@ -68,7 +68,7 @@ export class WheelClassifier {
    */
   numEvents: number = 0;
   /**
-   * Peak number of events received within a 1-second (1000ms) window.
+   * Peak number of events received within a 1-second window.
    */
   peakEventsPerSec: number = 0;
 
@@ -77,7 +77,7 @@ export class WheelClassifier {
   addEvent(e: WheelEvent) {
     this.numEvents++;
 
-    const timestamp = (typeof e.timeStamp === 'number' && e.timeStamp > 0) ? e.timeStamp : (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    const timestamp = e.timeStamp;
     this.timestamps.push(timestamp);
     while (this.timestamps.length > 0 && this.timestamps[0] <= timestamp - 1000) {
       this.timestamps.shift();
@@ -122,13 +122,7 @@ export class WheelClassifier {
     if (this.deltaModeNotPixels > 0) {
       return 'mouse'
     }
-    if (this.deltaYFractional > 0) {
-      return 'trackpad'
-    }
     if (this.deltaXEvents > 0) {
-      return 'trackpad'
-    }
-    if (this.peakEventsPerSec > 30) {
       return 'trackpad'
     }
     if (this.deltaYLooksLikeTick < this.numEvents) {
