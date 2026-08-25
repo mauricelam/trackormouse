@@ -43,12 +43,17 @@ export function runStreamTestCase(testCase: WheelStreamTestCase): WheelClassifie
   }
 
   const classifier = new WheelClassifier();
-  for (const eventData of testCase.events) {
+  for (const [i, eventData] of testCase.events.entries()) {
     const evt = createWheelEventFromData(eventData);
     classifier.addEvent(evt);
+    if (i >= 3) {
+      // Assert that the device type is correctly inferred after 3 events
+      const inferred = classifier.inferDeviceType();
+      expect(inferred, `${classifier.debugString()}`).toBe(testCase.expectedDeviceType);
+    }
   }
 
   const inferred = classifier.inferDeviceType();
-  expect(inferred, `Test case "${testCase.name}": ${classifier.debugString()}`).toBe(testCase.expectedDeviceType);
+  expect(inferred, `${classifier.debugString()}`).toBe(testCase.expectedDeviceType);
   return classifier;
 }

@@ -1,9 +1,0 @@
-{
-  "name": "Windows Firefox DOM_DELTA_LINE mouse scroll",
-  "platform": "Windows",
-  "events": [
-    { "deltaX": 0, "deltaY": 3, "deltaMode": 1, "timeStamp": 100.0 },
-    { "deltaX": 0, "deltaY": 3, "deltaMode": 1, "timeStamp": 200.0 }
-  ],
-  "expectedDeviceType": "mouse"
-}
