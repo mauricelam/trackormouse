@@ -122,6 +122,18 @@ describe('WheelClassifier', () => {
       }
 
       expect(classifier.numEvents).toBe(3);
+      expect(classifier.deltaXEvents).toBe(3);
+      expect(classifier.deltaXAndYEvents).toBe(0);
+      expect(classifier.inferDeviceType(), classifier.debugString()).toBe('trackpad');
+    });
+
+    it('classifies simultaneous non-zero deltaX and deltaY events as trackpad', () => {
+      const classifier = new WheelClassifier();
+      const event = createWheelEvent({ deltaX: 10, deltaY: 20, deltaMode: WheelEvent.DOM_DELTA_PIXEL });
+      classifier.addEvent(event);
+
+      expect(classifier.deltaXEvents).toBe(1);
+      expect(classifier.deltaXAndYEvents).toBe(1);
       expect(classifier.inferDeviceType(), classifier.debugString()).toBe('trackpad');
     });
 
