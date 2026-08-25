@@ -98,11 +98,6 @@
       background-color: rgba(255, 255, 255, 0.02);
     }
 
-    .scroll-area-icon {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-
     /* Output Badge */
     .result-badge {
       display: inline-flex;
@@ -155,12 +150,21 @@
       margin-bottom: 0;
     }
 
-    /* Simulation Buttons */
-    .sim-buttons {
+    .controls {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.75rem;
       margin-top: 1rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
     }
 
     .btn {
@@ -192,16 +196,14 @@
     <div class="card">
       <h2>Test Area</h2>
       <div id="scrollTarget" class="scroll-area">
-        <div class="scroll-area-icon">🖱️ / 🤌</div>
         <p><strong>Scroll / Wheel over this box</strong></p>
-        <p style="font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem;">
-          Or use simulation buttons below
-        </p>
       </div>
 
-      <div class="sim-buttons">
-        <button id="simMouseBtn" class="btn">Simulate Mouse Wheel Event</button>
-        <button id="simTrackpadBtn" class="btn">Simulate Trackpad Wheel Event</button>
+      <div class="controls">
+        <label class="checkbox-label">
+          <input type="checkbox" id="autoResetCheckbox">
+          Auto-reset state after 3 seconds of inactivity
+        </label>
         <button id="resetBtn" class="btn" style="background: #991b1b;">Reset State</button>
       </div>
     </div>
@@ -212,7 +214,6 @@
 
       <div style="text-align: center; margin-top: 1rem;">
         <div id="deviceBadge" class="result-badge unknown">
-          <span id="deviceIcon">❓</span>
           <span id="deviceText">unknown</span>
         </div>
       </div>
@@ -228,37 +229,51 @@
     import { WheelClassifier } from '../src/index.ts';
 
     const scrollTarget = document.getElementById('scrollTarget');
-    const simMouseBtn = document.getElementById('simMouseBtn');
-    const simTrackpadBtn = document.getElementById('simTrackpadBtn');
     const resetBtn = document.getElementById('resetBtn');
+    const autoResetCheckbox = document.getElementById('autoResetCheckbox');
 
     const deviceBadge = document.getElementById('deviceBadge');
-    const deviceIcon = document.getElementById('deviceIcon');
     const deviceText = document.getElementById('deviceText');
     const reasonsList = document.getElementById('reasonsList');
 
     let classifier = new WheelClassifier();
+    let autoResetTimer = null;
+
+    function resetState() {
+      if (autoResetTimer) {
+        clearTimeout(autoResetTimer);
+        autoResetTimer = null;
+      }
+      classifier = new WheelClassifier();
+      updateOutput();
+    }
+
+    function scheduleAutoReset() {
+      if (autoResetTimer) {
+        clearTimeout(autoResetTimer);
+        autoResetTimer = null;
+      }
+      if (autoResetCheckbox.checked) {
+        autoResetTimer = setTimeout(() => {
+          resetState();
+        }, 3000);
+      }
+    }
 
     function updateOutput() {
       const device = classifier.inferDeviceType() || 'unknown';
 
       deviceBadge.className = `result-badge ${device}`;
-      if (device === 'mouse') deviceIcon.textContent = '🖱️';
-      else if (device === 'trackpad') deviceIcon.textContent = '🤌';
-      else deviceIcon.textContent = '❓';
-
       deviceText.textContent = device;
-
-      const hasDevice = device !== 'unknown';
 
       if (classifier.numEvents > 0) {
         reasonsList.innerHTML = `
-          <li>• Total events: ${classifier.numEvents}</li>
-          <li>• Peak events/sec: ${classifier.peakEventsPerSec}</li>
-          <li>• Delta X events: ${classifier.deltaXEvents}</li>
-          <li>• Delta Y looks like tick: ${classifier.deltaYLooksLikeTick}</li>
-          <li>• Delta Y fractional: ${classifier.deltaYFractional}</li>
-          <li>• Delta mode not pixels: ${classifier.deltaModeNotPixels}</li>
+          <li>Total events: ${classifier.numEvents}</li>
+          <li>Peak events/sec: ${classifier.peakEventsPerSec}</li>
+          <li>Delta X events: ${classifier.deltaXEvents}</li>
+          <li>Delta Y looks like tick: ${classifier.deltaYLooksLikeTick}</li>
+          <li>Delta Y fractional: ${classifier.deltaYFractional}</li>
+          <li>Delta mode not pixels: ${classifier.deltaModeNotPixels}</li>
         `;
       } else {
         reasonsList.innerHTML = '<li>No wheel events received yet</li>';
@@ -269,34 +284,22 @@
       console.log('Wheel event', e);
       classifier.addEvent(e);
       updateOutput();
+      scheduleAutoReset();
     }
 
     scrollTarget.addEventListener('wheel', handleWheel, { passive: true });
 
-    // Simulation Handlers
-    simMouseBtn.addEventListener('click', () => {
-      const evt = new WheelEvent('wheel', {
-        deltaY: 120,
-        deltaX: 0,
-        deltaMode: 0,
-        bubbles: true,
-      });
-      handleWheel(evt);
-    });
-
-    simTrackpadBtn.addEventListener('click', () => {
-      const evt = new WheelEvent('wheel', {
-        deltaY: 2.345,
-        deltaX: 1.12,
-        deltaMode: 0,
-        bubbles: true,
-      });
-      handleWheel(evt);
+    autoResetCheckbox.addEventListener('change', () => {
+      if (!autoResetCheckbox.checked && autoResetTimer) {
+        clearTimeout(autoResetTimer);
+        autoResetTimer = null;
+      } else if (autoResetCheckbox.checked && classifier.numEvents > 0) {
+        scheduleAutoReset();
+      }
     });
 
     resetBtn.addEventListener('click', () => {
-      classifier = new WheelClassifier();
-      updateOutput();
+      resetState();
     });
 
     // Initialize
