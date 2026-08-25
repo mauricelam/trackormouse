@@ -1,0 +1,19 @@
+{
+  "name": "macOS Chromium trackpad scroll gesture",
+  "platform": "macOS",
+  "events": [
+    { "deltaX": 0, "deltaY": 0.5, "deltaMode": 0, "timeStamp": 1000.0 },
+    { "deltaX": 0, "deltaY": 1.2, "deltaMode": 0, "timeStamp": 1016.0 },
+    { "deltaX": 0, "deltaY": 3.8, "deltaMode": 0, "timeStamp": 1033.0 },
+    { "deltaX": 0, "deltaY": 7.4, "deltaMode": 0, "timeStamp": 1050.0 },
+    { "deltaX": 0, "deltaY": 12.1, "deltaMode": 0, "timeStamp": 1066.0 },
+    { "deltaX": 0, "deltaY": 15.3, "deltaMode": 0, "timeStamp": 1083.0 },
+    { "deltaX": 0, "deltaY": 18.0, "deltaMode": 0, "timeStamp": 1100.0 },
+    { "deltaX": 0, "deltaY": 14.2, "deltaMode": 0, "timeStamp": 1116.0 },
+    { "deltaX": 0, "deltaY": 8.5, "deltaMode": 0, "timeStamp": 1133.0 },
+    { "deltaX": 0, "deltaY": 4.1, "deltaMode": 0, "timeStamp": 1150.0 },
+    { "deltaX": 0, "deltaY": 2.0, "deltaMode": 0, "timeStamp": 1166.0 },
+    { "deltaX": 0, "deltaY": 0.8, "deltaMode": 0, "timeStamp": 1183.0 }
+  ],
+  "expectedDeviceType": "trackpad"
+}
