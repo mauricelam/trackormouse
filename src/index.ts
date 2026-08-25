@@ -9,6 +9,9 @@
 //   * On Mac, the scaling from wheel-tick to pixels is done via the
 //     `kScrollbarPixelsPerCocoaTick = 40` constant.
 //     https://source.chromium.org/chromium/chromium/src/+/main:ui/events/cocoa/cocoa_event_utils.h;l=18;drc=21ee2cded24bba63af70dc1a15332a6fb2b07486
+//   * Empirically the value 4.000244140625 shows up a lot for mice on Mac. This
+//     is que to a quirk of how NSEvent stores the deltaY of 0.1 in a
+//     fixed-point Q16.16 field, which is then scaled up by 40 by Chromium.
 // * Gecko / Firefox
 //   * On Windows reports deltaMode uses LINE / PAGE for both mice and
 //     trackpads, depending on `SPI_GETWHEELSCROLLLINES`.
