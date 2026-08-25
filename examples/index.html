@@ -4,181 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wheel Device Detector Demo</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --border: #334155;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent-mouse: #38bdf8;
-      --accent-trackpad: #a855f7;
-      --accent-unknown: #64748b;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    p.subtitle {
-      color: var(--muted);
-      font-size: 1rem;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 900px;
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-
-    .card h2 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.5rem;
-    }
-
-    /* Scroll Area */
-    .scroll-area {
-      height: 220px;
-      border: 2px dashed var(--border);
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 1rem;
-      cursor: pointer;
-      user-select: none;
-      transition: border-color 0.2s, background-color 0.2s;
-    }
-
-    .scroll-area:hover {
-      border-color: var(--muted);
-      background-color: rgba(255, 255, 255, 0.02);
-    }
-
-    .scroll-area-icon {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    /* Output Badge */
-    .result-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 9999px;
-      font-size: 1.25rem;
-      font-weight: 600;
-      text-transform: capitalize;
-      margin-bottom: 1rem;
-      background: var(--border);
-    }
-
-    .result-badge.mouse {
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent-mouse);
-      border: 1px solid var(--accent-mouse);
-    }
-
-    .result-badge.trackpad {
-      background: rgba(168, 85, 247, 0.15);
-      color: var(--accent-trackpad);
-      border: 1px solid var(--accent-trackpad);
-    }
-
-    .result-badge.unknown {
-      background: rgba(100, 116, 139, 0.15);
-      color: var(--accent-unknown);
-      border: 1px solid var(--accent-unknown);
-    }
-
-    .reasons-list {
-      list-style: none;
-      font-family: monospace;
-      font-size: 0.85rem;
-      color: var(--muted);
-      background: rgba(0, 0, 0, 0.2);
-      padding: 0.75rem;
-      border-radius: 6px;
-      max-height: 180px;
-      overflow-y: auto;
-    }
-
-    .reasons-list li {
-      margin-bottom: 0.25rem;
-    }
-
-    .reasons-list li:last-child {
-      margin-bottom: 0;
-    }
-
-    /* Simulation Buttons */
-    .sim-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    .btn {
-      padding: 0.5rem;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: #334155;
-      color: var(--text);
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 0.85rem;
-      transition: background-color 0.2s;
-    }
-
-    .btn:hover {
-      background: #475569;
-    }
-  </style>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
@@ -192,16 +18,14 @@
     <div class="card">
       <h2>Test Area</h2>
       <div id="scrollTarget" class="scroll-area">
-        <div class="scroll-area-icon">🖱️ / 🤌</div>
         <p><strong>Scroll / Wheel over this box</strong></p>
-        <p style="font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem;">
-          Or use simulation buttons below
-        </p>
       </div>
 
-      <div class="sim-buttons">
-        <button id="simMouseBtn" class="btn">Simulate Mouse Wheel Event</button>
-        <button id="simTrackpadBtn" class="btn">Simulate Trackpad Wheel Event</button>
+      <div class="controls">
+        <label class="checkbox-label">
+          <input type="checkbox" id="autoResetCheckbox" checked>
+          Auto-reset state after 3 seconds of inactivity
+        </label>
         <button id="resetBtn" class="btn" style="background: #991b1b;">Reset State</button>
       </div>
     </div>
@@ -212,7 +36,6 @@
 
       <div style="text-align: center; margin-top: 1rem;">
         <div id="deviceBadge" class="result-badge unknown">
-          <span id="deviceIcon">❓</span>
           <span id="deviceText">unknown</span>
         </div>
       </div>
@@ -224,84 +47,6 @@
     </div>
   </div>
 
-  <script type="module">
-    import { WheelClassifier } from '../src/index.ts';
-
-    const scrollTarget = document.getElementById('scrollTarget');
-    const simMouseBtn = document.getElementById('simMouseBtn');
-    const simTrackpadBtn = document.getElementById('simTrackpadBtn');
-    const resetBtn = document.getElementById('resetBtn');
-
-    const deviceBadge = document.getElementById('deviceBadge');
-    const deviceIcon = document.getElementById('deviceIcon');
-    const deviceText = document.getElementById('deviceText');
-    const reasonsList = document.getElementById('reasonsList');
-
-    let classifier = new WheelClassifier();
-
-    function updateOutput() {
-      const device = classifier.inferDeviceType() || 'unknown';
-
-      deviceBadge.className = `result-badge ${device}`;
-      if (device === 'mouse') deviceIcon.textContent = '🖱️';
-      else if (device === 'trackpad') deviceIcon.textContent = '🤌';
-      else deviceIcon.textContent = '❓';
-
-      deviceText.textContent = device;
-
-      const hasDevice = device !== 'unknown';
-
-      if (classifier.numEvents > 0) {
-        reasonsList.innerHTML = `
-          <li>• Total events: ${classifier.numEvents}</li>
-          <li>• Peak events/sec: ${classifier.peakEventsPerSec}</li>
-          <li>• Delta X events: ${classifier.deltaXEvents}</li>
-          <li>• Delta X and Y events: ${classifier.deltaXAndYEvents}</li>
-          <li>• Delta Y looks like tick: ${classifier.deltaYLooksLikeTick}</li>
-          <li>• Delta Y fractional: ${classifier.deltaYFractional}</li>
-          <li>• Delta mode not pixels: ${classifier.deltaModeNotPixels}</li>
-        `;
-      } else {
-        reasonsList.innerHTML = '<li>No wheel events received yet</li>';
-      }
-    }
-
-    function handleWheel(e) {
-      console.log('Wheel event', e);
-      classifier.addEvent(e);
-      updateOutput();
-    }
-
-    scrollTarget.addEventListener('wheel', handleWheel, { passive: true });
-
-    // Simulation Handlers
-    simMouseBtn.addEventListener('click', () => {
-      const evt = new WheelEvent('wheel', {
-        deltaY: 120,
-        deltaX: 0,
-        deltaMode: 0,
-        bubbles: true,
-      });
-      handleWheel(evt);
-    });
-
-    simTrackpadBtn.addEventListener('click', () => {
-      const evt = new WheelEvent('wheel', {
-        deltaY: 2.345,
-        deltaX: 1.12,
-        deltaMode: 0,
-        bubbles: true,
-      });
-      handleWheel(evt);
-    });
-
-    resetBtn.addEventListener('click', () => {
-      classifier = new WheelClassifier();
-      updateOutput();
-    });
-
-    // Initialize
-    updateOutput();
-  </script>
+  <script type="module" src="./main.ts"></script>
 </body>
 </html>
