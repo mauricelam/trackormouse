@@ -68,7 +68,10 @@ export class WheelClassifier {
    */
   numEvents: number = 0;
   /**
-   * Peak number of events received within a 1-second window.
+   * Peak number of events received within a 160ms window.
+   *
+   * On Mac, trackpad scroll events are fired at 60fps, which means ~10 events
+   * per 160ms window.
    */
   peakEventsPerSec: number = 0;
 
@@ -79,7 +82,7 @@ export class WheelClassifier {
 
     const timestamp = e.timeStamp;
     this.timestamps.push(timestamp);
-    while (this.timestamps.length > 0 && this.timestamps[0] <= timestamp - 1000) {
+    while (this.timestamps.length > 0 && this.timestamps[0] <= timestamp - 160) {
       this.timestamps.shift();
     }
     if (this.timestamps.length > this.peakEventsPerSec) {
@@ -125,7 +128,11 @@ export class WheelClassifier {
     if (this.deltaXEvents > 0) {
       return 'trackpad'
     }
-    if (this.deltaYLooksLikeTick < this.numEvents) {
+    if (this.deltaYLooksLikeTick === this.numEvents) {
+      return 'mouse'
+    }
+    if (this.peakEventsPerSec > 9) {
+      // Macs send trackpad scroll events at 60fps
       return 'trackpad'
     }
     return 'mouse'
