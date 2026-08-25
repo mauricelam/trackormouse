@@ -125,7 +125,11 @@ export class WheelClassifier {
     if (this.deltaXEvents > 0) {
       return 'trackpad'
     }
-    if (this.deltaYLooksLikeTick < this.numEvents) {
+    if (this.deltaYLooksLikeTick === this.numEvents) {
+      return 'mouse'
+    }
+    if (this.peakEventsPerSec > 9) {
+      // Macs send trackpad scroll events at 60fps
       return 'trackpad'
     }
     return 'mouse'
