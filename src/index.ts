@@ -52,6 +52,10 @@ export class WheelClassifier {
    */
   deltaXEvents: number = 0;
   /**
+   * Number of events that contain both non-zero delta X and non-zero delta Y at the same time.
+   */
+  deltaXAndYEvents: number = 0;
+  /**
    * Number of events where the deltaY looks like a wheel tick.
    */
   deltaYLooksLikeTick: number = 0;
@@ -100,6 +104,10 @@ export class WheelClassifier {
       this.deltaXEvents++;
     }
 
+    if (dx !== 0 && dy !== 0) {
+      this.deltaXAndYEvents++;
+    }
+
     if (!Number.isInteger(dy)) {
       this.deltaYFractional++;
     }
@@ -122,6 +130,9 @@ export class WheelClassifier {
     if (this.deltaModeNotPixels > 0) {
       return 'mouse'
     }
+    if (this.deltaXAndYEvents > 0) {
+      return 'trackpad'
+    }
     if (this.deltaXEvents > 0) {
       return 'trackpad'
     }
@@ -136,6 +147,6 @@ export class WheelClassifier {
   }
 
   debugString(): string {
-    return `deltaXEvents: ${this.deltaXEvents}, deltaYLooksLikeTick: ${this.deltaYLooksLikeTick}, deltaYFractional: ${this.deltaYFractional}, deltaModeNotPixels: ${this.deltaModeNotPixels}, numEvents: ${this.numEvents}, peakEventsPerSec: ${this.peakEventsPerSec}`
+    return `deltaXEvents: ${this.deltaXEvents}, deltaXAndYEvents: ${this.deltaXAndYEvents}, deltaYLooksLikeTick: ${this.deltaYLooksLikeTick}, deltaYFractional: ${this.deltaYFractional}, deltaModeNotPixels: ${this.deltaModeNotPixels}, numEvents: ${this.numEvents}, peakEventsPerSec: ${this.peakEventsPerSec}`
   }
 }
