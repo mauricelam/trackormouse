@@ -7,9 +7,19 @@ const autoResetCheckbox = document.getElementById('autoResetCheckbox') as HTMLIn
 const deviceBadge = document.getElementById('deviceBadge') as HTMLElement;
 const deviceText = document.getElementById('deviceText') as HTMLElement;
 const reasonsList = document.getElementById('reasonsList') as HTMLElement;
+const jsonOutput = document.getElementById('jsonOutput') as HTMLTextAreaElement;
+
+interface CapturedWheelEvent {
+  deltaX: number;
+  deltaY: number;
+  deltaMode: number;
+  timeStamp: number;
+}
 
 let classifier = new WheelClassifier();
 let autoResetTimer: any = null;
+let capturedEvents: CapturedWheelEvent[] = [];
+let pendingClear = false;
 
 function resetState() {
   if (autoResetTimer) {
@@ -17,6 +27,7 @@ function resetState() {
     autoResetTimer = null;
   }
   classifier = new WheelClassifier();
+  pendingClear = true;
   updateOutput();
 }
 
@@ -30,6 +41,16 @@ function scheduleAutoReset() {
       resetState();
     }, 3000);
   }
+}
+
+function updateJsonOutput() {
+  if (!jsonOutput) return;
+  const data = {
+    userAgent: navigator.userAgent,
+    expectedDeviceType: classifier.inferDeviceType(),
+    events: capturedEvents,
+  };
+  jsonOutput.value = JSON.stringify(data, null, 2);
 }
 
 function updateOutput() {
@@ -54,8 +75,22 @@ function updateOutput() {
 
 function handleWheel(e: WheelEvent) {
   console.log('Wheel event', e);
+
+  if (pendingClear) {
+    capturedEvents = [];
+    pendingClear = false;
+  }
+
+  capturedEvents.push({
+    deltaX: e.deltaX,
+    deltaY: e.deltaY,
+    deltaMode: e.deltaMode,
+    timeStamp: e.timeStamp,
+  });
+
   classifier.addEvent(e);
   updateOutput();
+  updateJsonOutput();
   scheduleAutoReset();
 }
 
@@ -76,3 +111,4 @@ resetBtn.addEventListener('click', () => {
 
 // Initialize
 updateOutput();
+updateJsonOutput();
