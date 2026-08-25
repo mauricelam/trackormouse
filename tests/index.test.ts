@@ -2,13 +2,23 @@ import { describe, it, expect } from 'vitest';
 import { WheelClassifier } from '../src/index.js';
 import { stubChromiumMacOS, stubChromiumWindows } from './browser_stub.js';
 
-function createWheelEvent(init: Partial<WheelEventInit> = {}): WheelEvent {
-  return new WheelEvent('wheel', {
+function createWheelEvent(init: Partial<WheelEventInit> & { timeStamp?: number } = {}): WheelEvent {
+  const { timeStamp, ...wheelInit } = init;
+  const evt = new WheelEvent('wheel', {
     deltaX: 0,
     deltaY: 0,
     deltaMode: 0,
-    ...init,
+    ...wheelInit,
   });
+  if (timeStamp !== undefined) {
+    Object.defineProperty(evt, 'timeStamp', {
+      value: timeStamp,
+      writable: false,
+      configurable: true,
+      enumerable: true,
+    });
+  }
+  return evt;
 }
 
 describe('WheelClassifier', () => {
@@ -156,6 +166,52 @@ describe('WheelClassifier', () => {
       // Subsequent events don't clear the fractional delta flag
       classifier.addEvent(createWheelEvent({ deltaY: -120, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
       expect(classifier.inferDeviceType()).toBe('trackpad');
+    });
+  });
+
+  describe('peakEventsPerSec heuristic', () => {
+    it('calculates peak events per second correctly using timestamps', () => {
+      const classifier = new WheelClassifier();
+      const baseTime = 1000;
+
+      // Send 5 events at time 1000ms
+      for (let i = 0; i < 5; i++) {
+        classifier.addEvent(createWheelEvent({ deltaY: 120, timeStamp: baseTime }));
+      }
+      expect(classifier.peakEventsPerSec).toBe(5);
+
+      // Send 10 events at time 1500ms (window: 1000ms..1500ms has 15 events)
+      for (let i = 0; i < 10; i++) {
+        classifier.addEvent(createWheelEvent({ deltaY: 120, timeStamp: baseTime + 500 }));
+      }
+      expect(classifier.peakEventsPerSec).toBe(15);
+
+      // Send 2 events at time 2500ms (1000ms event expired, window: 1500ms..2500ms has 10 + 2 = 12 events)
+      for (let i = 0; i < 2; i++) {
+        classifier.addEvent(createWheelEvent({ deltaY: 120, timeStamp: baseTime + 1500 }));
+      }
+      // Peak remains 15
+      expect(classifier.peakEventsPerSec).toBe(15);
+    });
+
+    it('classifies high frequency events (>30 events/sec) as trackpad even if deltas look like ticks', () => {
+      stubChromiumWindows();
+      const classifier = new WheelClassifier();
+      const baseTime = 1000;
+
+      // Send 35 events (multiples of 120 tick quantum) within 500ms
+      for (let i = 0; i < 35; i++) {
+        classifier.addEvent(createWheelEvent({
+          deltaY: 120,
+          deltaX: 0,
+          deltaMode: WheelEvent.DOM_DELTA_PIXEL,
+          timeStamp: baseTime + i * 10,
+        }));
+      }
+
+      expect(classifier.peakEventsPerSec).toBe(35);
+      expect(classifier.deltaYLooksLikeTick).toBe(35);
+      expect(classifier.inferDeviceType(), classifier.debugString()).toBe('trackpad');
     });
   });
 });

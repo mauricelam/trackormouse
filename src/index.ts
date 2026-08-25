@@ -67,9 +67,24 @@ export class WheelClassifier {
    * Total number of accumulated events.
    */
   numEvents: number = 0;
+  /**
+   * Peak number of events received within a 1-second (1000ms) window.
+   */
+  peakEventsPerSec: number = 0;
+
+  private timestamps: number[] = [];
 
   addEvent(e: WheelEvent) {
     this.numEvents++;
+
+    const timestamp = (typeof e.timeStamp === 'number' && e.timeStamp > 0) ? e.timeStamp : (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    this.timestamps.push(timestamp);
+    while (this.timestamps.length > 0 && this.timestamps[0] <= timestamp - 1000) {
+      this.timestamps.shift();
+    }
+    if (this.timestamps.length > this.peakEventsPerSec) {
+      this.peakEventsPerSec = this.timestamps.length;
+    }
 
     // Reading `deltaMode` has the side-effect on Firefox to make it turn off
     // the pixel-reporting-by-default compatibility mode.
@@ -113,6 +128,9 @@ export class WheelClassifier {
     if (this.deltaXEvents > 0) {
       return 'trackpad'
     }
+    if (this.peakEventsPerSec > 30) {
+      return 'trackpad'
+    }
     if (this.deltaYLooksLikeTick < this.numEvents) {
       return 'trackpad'
     }
@@ -120,6 +138,6 @@ export class WheelClassifier {
   }
 
   debugString(): string {
-    return `deltaXEvents: ${this.deltaXEvents}, deltaYLooksLikeTick: ${this.deltaYLooksLikeTick}, deltaYFractional: ${this.deltaYFractional}, deltaModeNotPixels: ${this.deltaModeNotPixels}, numEvents: ${this.numEvents}`
+    return `deltaXEvents: ${this.deltaXEvents}, deltaYLooksLikeTick: ${this.deltaYLooksLikeTick}, deltaYFractional: ${this.deltaYFractional}, deltaModeNotPixels: ${this.deltaModeNotPixels}, numEvents: ${this.numEvents}, peakEventsPerSec: ${this.peakEventsPerSec}`
   }
 }

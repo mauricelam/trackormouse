@@ -45,6 +45,7 @@ The `WheelClassifier` class accumulates feature counts across incoming `WheelEve
 - `deltaYFractional: number` — Count of events where `deltaY` is a non-integer value.
 - `deltaModeNotPixels: number` — Count of events where `deltaMode === WheelEvent.DOM_DELTA_LINE`.
 - `numEvents: number` — Total accumulated events added to classifier.
+- `peakEventsPerSec: number` — Maximum event frequency observed in a 1-second sliding window.
 
 #### API Surface
 
@@ -55,6 +56,7 @@ export class WheelClassifier {
   deltaYFractional: number;
   deltaModeNotPixels: number;
   numEvents: number;
+  peakEventsPerSec: number;
 
   addEvent(e: WheelEvent): void;
   inferDeviceType(): InputDevice | null;
@@ -71,6 +73,7 @@ When `inferDeviceType()` is called:
 1. **No Data Check**: If `numEvents === 0`, returns `null`.
 2. **Line Mode Check**: If `deltaModeNotPixels > 0`, infers `'mouse'`.
 3. **Fractional Delta Check**: If `deltaYFractional > 0`, infers `'trackpad'`.
-4. **Horizontal Axis Check**: If `deltaXEvents > 0`, infers `'mouse'`.
-5. **Tick Step Quantum Check**: If `deltaYLooksLikeTick === numEvents`, infers `'mouse'`.
-6. **Default Fallback**: Otherwise, infers `'trackpad'`.
+4. **Horizontal Axis Check**: If `deltaXEvents > 0`, infers `'trackpad'`.
+5. **Event Frequency Check**: If `peakEventsPerSec > 30`, infers `'trackpad'`.
+6. **Tick Step Quantum Check**: If `deltaYLooksLikeTick === numEvents`, infers `'mouse'`.
+7. **Default Fallback**: Otherwise, infers `'trackpad'`.
