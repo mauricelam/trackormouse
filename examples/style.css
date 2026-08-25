@@ -143,6 +143,114 @@ p.subtitle {
   margin-bottom: 0;
 }
 
+/* Rules List & Highlights */
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.empty-rules {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.75rem;
+  border-radius: 6px;
+}
+
+.rule-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid transparent;
+  font-size: 0.825rem;
+  transition: all 0.2s ease-in-out;
+  opacity: 0.6;
+}
+
+.rule-item.signal-active {
+  opacity: 1;
+}
+
+.rule-item.signal-mouse {
+  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.rule-item.signal-trackpad {
+  border-color: rgba(168, 85, 247, 0.4);
+  background: rgba(168, 85, 247, 0.08);
+}
+
+.rule-item.winning-rule {
+  opacity: 1;
+  box-shadow: 0 0 0 1px currentColor, 0 0 8px rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+}
+
+.rule-item.winning-rule.signal-mouse {
+  border-color: var(--accent-mouse);
+  background: rgba(56, 189, 248, 0.2);
+  color: #e0f2fe;
+}
+
+.rule-item.winning-rule.signal-trackpad {
+  border-color: var(--accent-trackpad);
+  background: rgba(168, 85, 247, 0.2);
+  color: #f3e8ff;
+}
+
+.rule-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.rule-name {
+  font-family: monospace;
+  font-weight: 600;
+}
+
+.rule-desc {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.rule-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.rule-tag {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.rule-tag.signal-badge-mouse {
+  background: rgba(56, 189, 248, 0.2);
+  color: var(--accent-mouse);
+}
+
+.rule-tag.signal-badge-trackpad {
+  background: rgba(168, 85, 247, 0.2);
+  color: var(--accent-trackpad);
+}
+
+.rule-tag.winning-badge {
+  background: #f59e0b;
+  color: #1e1b4b;
+}
+
 .controls {
   display: flex;
   flex-direction: column;
