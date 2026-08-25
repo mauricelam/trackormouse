@@ -265,6 +265,7 @@
     }
 
     function handleWheel(e) {
+      console.log('Wheel event', e);
       classifier.addEvent(e);
       updateOutput();
     }
