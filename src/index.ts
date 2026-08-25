@@ -124,26 +124,30 @@ export class WheelClassifier {
    * @returns The inferred device type, or null if it cannot be determined.
    */
   inferDeviceType(): InputDevice | null {
+    return this.inferDeviceTypeWithReason()?.deviceType || null
+  }
+
+  inferDeviceTypeWithReason(): { deviceType: InputDevice; reason: string } | null {
     if (this.numEvents === 0) {
       return null
     }
     if (this.deltaModeNotPixels > 0) {
-      return 'mouse'
+      return { deviceType: 'mouse', reason: 'deltaModeNotPixels' }
     }
     if (this.deltaXAndYEvents > 0) {
-      return 'trackpad'
+      return { deviceType: 'trackpad', reason: 'deltaXAndYEvents' }
     }
     if (this.deltaXEvents > 0) {
-      return 'trackpad'
+      return { deviceType: 'trackpad', reason: 'deltaXEvents' }
     }
     if (this.deltaYLooksLikeTick === this.numEvents) {
-      return 'mouse'
+      return { deviceType: 'mouse', reason: 'deltaYLooksLikeTick' }
     }
     if (this.peakEventsPerSec > 9) {
       // Macs send trackpad scroll events at 60fps
-      return 'trackpad'
+      return { deviceType: 'trackpad', reason: 'peakEventsPerSec' }
     }
-    return 'mouse'
+    return { deviceType: 'mouse', reason: 'default' }
   }
 
   debugString(): string {
