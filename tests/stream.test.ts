@@ -14,11 +14,9 @@ describe('JSON Stream Tests', () => {
     runStreamTestCase(macLogiMouseFixture as WheelStreamTestCase);
   });
   it(`runs JSON stream test: ${macLogiMouseNoTicksFixture.name}`, () => {
-    // Currently failing
-    // runStreamTestCase(macLogiMouseNoTicksFixture as WheelStreamTestCase);
+    runStreamTestCase(macLogiMouseNoTicksFixture as WheelStreamTestCase);
   });
   it(`runs JSON stream test: ${macEvoluentMouseFixture.name}`, () => {
-    // Currently failing
-    // runStreamTestCase(macEvoluentMouseFixture as WheelStreamTestCase);
+    runStreamTestCase(macEvoluentMouseFixture as WheelStreamTestCase);
   });
 });

@@ -40,6 +40,13 @@ export type InputDevice = 'mouse' | 'trackpad' | 'unknown';
 // https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-mousehwheel
 const WINDOWS_WHEEL_DELTA = 120;
 
+// Empirically the value 4.000244140625 shows up a lot for mice on Mac. This is
+// due to a quirk of how NSEvent stores the deltaY of 0.1 in a fixed-point
+// Q16.16 field, which is then scaled up by 40 by Chromium.
+//
+// MacOS also accelerates the scroll, so values won't be exact multiples of this.
+const MAC_WHEEL_TICK_VALUE = 4.000244140625;
+
 // Corresponds to `kScrollbarPixelsPerCocoaTick` constant defined by Chromium
 // for macOS.
 // https://source.chromium.org/chromium/chromium/src/+/main:ui/events/cocoa/cocoa_event_utils.h;l=18;drc=21ee2cded24bba63af70dc1a15332a6fb2b07486
@@ -117,7 +124,7 @@ export class WheelClassifier {
 
     if (isWindows() && Math.abs(dy) > 0 && Math.abs(dy) % WINDOWS_WHEEL_DELTA === 0) {
       this.deltaYLooksLikeTick++;
-    } else if (isMacOS() && Math.abs(dy) > 0 && Math.abs(dy) % CHROMIUM_MAC_TICK === 0) {
+    } else if (isMacOS() && Math.abs(dy) === MAC_WHEEL_TICK_VALUE) {
       this.deltaYLooksLikeTick++;
     }
   }
@@ -145,6 +152,9 @@ export class WheelClassifier {
     }
     if (this.deltaYLooksLikeTick === this.numEvents) {
       return { deviceType: 'mouse', reason: 'deltaYLooksLikeTick' }
+    }
+    if (isMacOS() && this.deltaYLooksLikeTick / this.numEvents > 0.1) {
+      return { deviceType: 'mouse', reason: 'deltaYLooksLikeTickMac'}
     }
     if (this.peakEventsPerSec > 9) {
       // Macs send trackpad scroll events at 60fps

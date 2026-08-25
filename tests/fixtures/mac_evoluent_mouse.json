@@ -1,6 +1,7 @@
 {
   "name": "Mac, Evoluent vertical mouse",
   "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+  "platform": "macOS",
   "expectedDeviceType": "mouse",
   "events": [
     { "deltaX": 0, "deltaY": 4.000244140625, "deltaMode": 0, "timeStamp": 451.70000000298023 },
