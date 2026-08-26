@@ -105,7 +105,7 @@ function handleWheel(e: WheelEvent) {
   e.preventDefault();
 }
 
-scrollTarget.addEventListener('wheel', handleWheel, { passive: true });
+scrollTarget.addEventListener('wheel', handleWheel);
 
 autoResetCheckbox.addEventListener('change', () => {
   if (!autoResetCheckbox.checked && autoResetTimer) {
