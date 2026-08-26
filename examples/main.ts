@@ -78,7 +78,8 @@ document.getElementById('contributeBtn')?.addEventListener('click', contributeDa
 
 function contributeData() {
   const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe0g1LOQS3Yk57K-ST_8mIa0BqkoMh_pNWLPfF704MkQ_RubA/viewform?usp=pp_url";
-  window.open(`${googleFormUrl}&entry.1068443768=${encodeURIComponent(jsonOutput.value)}`)
+  const compactJson = JSON.stringify(JSON.parse(jsonOutput.value));
+  window.open(`${googleFormUrl}&entry.1068443768=${encodeURIComponent(compactJson)}`)
 }
 
 function handleWheel(e: WheelEvent) {
