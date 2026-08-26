@@ -51,7 +51,7 @@ function updateJsonOutput() {
     expectedDeviceType: classifier.inferDeviceType(),
     events: capturedEvents,
   };
-  jsonOutput.value = JSON.stringify(data, null, 2);
+  jsonOutput.value = JSON.stringify(data, null, 4);
 }
 
 function updateOutput() {
@@ -72,6 +72,13 @@ function updateOutput() {
   } else {
     reasonsList.innerHTML = '<li>No wheel events received yet</li>';
   }
+}
+
+document.getElementById('contributeBtn')?.addEventListener('click', contributeData)
+
+function contributeData() {
+  const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe0g1LOQS3Yk57K-ST_8mIa0BqkoMh_pNWLPfF704MkQ_RubA/viewform?usp=pp_url";
+  window.open(`${googleFormUrl}&entry.1068443768=${encodeURIComponent(jsonOutput.value)}`)
 }
 
 function handleWheel(e: WheelEvent) {
