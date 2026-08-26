@@ -100,6 +100,8 @@ function handleWheel(e: WheelEvent) {
   updateOutput();
   updateJsonOutput();
   scheduleAutoReset();
+
+  e.preventDefault();
 }
 
 scrollTarget.addEventListener('wheel', handleWheel, { passive: true });
