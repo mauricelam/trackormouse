@@ -156,14 +156,20 @@ export class WheelClassifier {
     if (isMacOS() && this.deltaYLooksLikeTick / this.numEvents > 0.1) {
       return { deviceType: 'mouse', reason: 'deltaYLooksLikeTickMac'}
     }
-    if (this.peakEventsPerSec > 9) {
+    if (isMacOS() && this.peakEventsPerSec <= 9) {
       // Macs send trackpad scroll events at 60fps
-      return { deviceType: 'trackpad', reason: 'peakEventsPerSec' }
+      return { deviceType: 'mouse', reason: 'peakEventsPerSec' }
     }
-    return { deviceType: 'mouse', reason: 'default' }
+    return { deviceType: 'trackpad', reason: 'default' }
   }
 
   debugString(): string {
-    return `deltaXEvents: ${this.deltaXEvents}, deltaXAndYEvents: ${this.deltaXAndYEvents}, deltaYLooksLikeTick: ${this.deltaYLooksLikeTick}, deltaYFractional: ${this.deltaYFractional}, deltaModeNotPixels: ${this.deltaModeNotPixels}, numEvents: ${this.numEvents}, peakEventsPerSec: ${this.peakEventsPerSec}`
+    return `  deltaXEvents: ${this.deltaXEvents}
+  deltaXAndYEvents: ${this.deltaXAndYEvents}
+  deltaYLooksLikeTick: ${this.deltaYLooksLikeTick}
+  deltaYFractional: ${this.deltaYFractional}
+  deltaModeNotPixels: ${this.deltaModeNotPixels}
+  numEvents: ${this.numEvents}
+  peakEventsPerSec: ${this.peakEventsPerSec}`
   }
 }

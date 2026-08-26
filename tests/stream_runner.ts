@@ -1,6 +1,6 @@
 import { expect } from 'vitest';
 import { WheelClassifier, InputDevice } from '../src/index.js';
-import { stubChromiumMacOS, stubChromiumWindows } from './browser_stub.js';
+import { stubChromiumMacOS, stubChromiumWindows, stubGenericBrowser } from './browser_stub.js';
 
 export interface WheelEventData {
   deltaX?: number;
@@ -35,25 +35,27 @@ export function createWheelEventFromData(data: WheelEventData): WheelEvent {
   return evt;
 }
 
-export function runStreamTestCase(testCase: WheelStreamTestCase): WheelClassifier {
+export function runStreamTestCase(testCase: WheelStreamTestCase, warmUpEventsNeeded: number = 3): WheelClassifier {
   if (testCase.platform === 'macOS') {
     stubChromiumMacOS();
   } else if (testCase.platform === 'Windows') {
     stubChromiumWindows();
+  } else {
+    stubGenericBrowser();
   }
 
   const classifier = new WheelClassifier();
   for (const [i, eventData] of testCase.events.entries()) {
     const evt = createWheelEventFromData(eventData);
     classifier.addEvent(evt);
-    if (i >= 3) {
+    if (i >= warmUpEventsNeeded) {
       // Assert that the device type is correctly inferred after 3 events
-      const inferred = classifier.inferDeviceType();
-      expect(inferred, `${classifier.debugString()}`).toBe(testCase.expectedDeviceType);
+      const inferred = classifier.inferDeviceTypeWithReason();
+      expect(inferred!!.deviceType, `Reason: ${inferred!!.reason}\n${classifier.debugString()}`).toBe(testCase.expectedDeviceType);
     }
   }
 
-  const inferred = classifier.inferDeviceType();
-  expect(inferred, `${classifier.debugString()}`).toBe(testCase.expectedDeviceType);
+  const inferred = classifier.inferDeviceTypeWithReason();
+  expect(inferred!!.deviceType, `Reason: ${inferred!!.reason}\n${classifier.debugString()}`).toBe(testCase.expectedDeviceType);
   return classifier;
 }

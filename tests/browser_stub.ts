@@ -15,3 +15,11 @@ export function stubChromiumWindows() {
         platform: 'Win32',
     });
 }
+
+export function stubGenericBrowser() {
+    vi.stubGlobal('navigator', {
+        userAgentData: { platform: 'Unknown' },
+        userAgent: 'Mozilla/5.0',
+        platform: 'Unknown',
+    });
+}

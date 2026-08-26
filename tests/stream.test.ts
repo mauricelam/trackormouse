@@ -5,6 +5,8 @@ import macTrackpadFixture from './fixtures/mac_trackpad.json';
 import macLogiMouseFixture from './fixtures/mac_logi_mouse.json';
 import macLogiMouseNoTicksFixture from './fixtures/mac_logi_mouse_no_ticks.json';
 import macEvoluentMouseFixture from './fixtures/mac_evoluent_mouse.json';
+import thinkpadTrackpadFixture from './fixtures/thinkpad_trackpad.json';
+
 
 describe('JSON Stream Tests', () => {
   it(`runs JSON stream test: ${macTrackpadFixture.name}`, () => {
@@ -18,5 +20,8 @@ describe('JSON Stream Tests', () => {
   });
   it(`runs JSON stream test: ${macEvoluentMouseFixture.name}`, () => {
     runStreamTestCase(macEvoluentMouseFixture as WheelStreamTestCase);
+  });
+  it(`runs JSON stream test: ${thinkpadTrackpadFixture.name}`, () => {
+    runStreamTestCase(thinkpadTrackpadFixture as WheelStreamTestCase);
   });
 });
