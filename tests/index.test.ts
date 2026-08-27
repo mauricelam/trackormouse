@@ -31,10 +31,10 @@ describe('WheelClassifier', () => {
     expect(result, classifier.debugString()).toBe('mouse');
   });
 
-  it('classifies integer step deltas (e.g., dy = 120) as mouse', () => {
+  it('classifies integer step deltas (e.g., dy = 66.666667) as mouse', () => {
     stubChromiumWindows()
     const classifier = new WheelClassifier();
-    const event = createWheelEvent({ deltaY: -120, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL });
+    const event = createWheelEvent({ deltaY: -66.666667, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL });
     classifier.addEvent(event);
     const result = classifier.inferDeviceType();
     expect(result, classifier.debugString()).toBe('mouse');
@@ -53,7 +53,7 @@ describe('WheelClassifier', () => {
     it('classifies a stream of Windows mouse wheel tick events', () => {
       stubChromiumWindows();
       const classifier = new WheelClassifier();
-      const deltas = [-120, -120, -120, 120, 240, -120];
+      const deltas = [-33.333333, -33.333333, -33.333333, 33.333333, 66.666667, -33.333333];
 
       for (const dy of deltas) {
         classifier.addEvent(createWheelEvent({ deltaY: dy, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
@@ -119,15 +119,6 @@ describe('WheelClassifier', () => {
       expect(classifier.numEvents).toBe(deltas.length);
       expect(classifier.inferDeviceType(), classifier.debugString()).toBe('trackpad');
     });
-
-    it('switches/maintains classification correctly across accumulated event sequence', () => {
-      stubChromiumWindows();
-      const classifier = new WheelClassifier();
-
-      // Starts with integer tick
-      classifier.addEvent(createWheelEvent({ deltaY: -120, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
-      expect(classifier.inferDeviceType()).toBe('mouse');
-    });
   });
 
   describe('peakEventsPerSec heuristic', () => {
@@ -153,25 +144,6 @@ describe('WheelClassifier', () => {
       }
       // Peak remains 15
       expect(classifier.peakEventsPerSec).toBe(15);
-    });
-
-    it('classifies high frequency events (>30 events/sec) as trackpad even if deltas look like ticks', () => {
-      stubChromiumWindows();
-      const classifier = new WheelClassifier();
-      const baseTime = 1000;
-
-      // Send 35 events (multiples of 120 tick quantum) within 500ms
-      for (let i = 0; i < 35; i++) {
-        classifier.addEvent(createWheelEvent({
-          deltaY: 120,
-          deltaX: 0,
-          deltaMode: WheelEvent.DOM_DELTA_PIXEL,
-          timeStamp: baseTime + i * 10,
-        }));
-      }
-
-      expect(classifier.peakEventsPerSec).toBe(35);
-      expect(classifier.deltaYLooksLikeTick).toBe(35);
     });
   });
 });

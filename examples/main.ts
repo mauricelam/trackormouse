@@ -47,7 +47,7 @@ function updateJsonOutput() {
   if (!jsonOutput) return;
   const data = {
     userAgent: navigator.userAgent,
-    platform: navigator.platform,
+    platform: (navigator as any).userAgentData?.platform,
     expectedDeviceType: classifier.inferDeviceType(),
     events: capturedEvents,
   };

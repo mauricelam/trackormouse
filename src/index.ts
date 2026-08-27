@@ -24,7 +24,7 @@
 //   * TODO: Figure out how this translation happens, whether it has a fixed
 //     scaling amount similar to `kScrollbarPixelsPerCocoaTick` in Blink.
 
-import { isMacOS, isWindows } from "./browser";
+import { isMacOS, isWebkitDescendant, isWindows } from "./browser";
 
 /**
  * Represents the detected input device type.
@@ -51,6 +51,13 @@ const MAC_WHEEL_TICK_VALUE = 4.000244140625;
 // for macOS.
 // https://source.chromium.org/chromium/chromium/src/+/main:ui/events/cocoa/cocoa_event_utils.h;l=18;drc=21ee2cded24bba63af70dc1a15332a6fb2b07486
 const CHROMIUM_MAC_TICK = 40;
+
+function gcd(a: number, b: number): number {
+    if (b === 0) {
+        return Math.abs(a);
+    }
+    return gcd(b, a % b);
+}
 
 /**
  * Classifies whether one or more wheel events are from a mouse or trackpad.
@@ -85,6 +92,10 @@ export class WheelClassifier {
    * Peak number of events received within a 1-second window.
    */
   peakEventsPerSec: number = 0;
+  /**
+   * Estimated tick size based on the events, assuming no acceleration curve is applied.
+   */
+  estimatedTickSize: number = 0;
 
   private timestamps: number[] = [];
 
@@ -122,10 +133,25 @@ export class WheelClassifier {
       this.deltaYFractional++;
     }
 
-    if (isWindows() && Math.abs(dy) > 0 && Math.abs(dy) % WINDOWS_WHEEL_DELTA === 0) {
-      this.deltaYLooksLikeTick++;
+    if (isWindows() && Math.abs(dy) > 0) {
+      if (isWebkitDescendant()) {
+        const div = Math.abs(dy) / (100 / 3);
+        if (Math.abs(Math.round(div) - div) < 1e-6) {
+          this.deltaYLooksLikeTick++;
+        }
+      } else {
+        if (Math.abs(dy) % WINDOWS_WHEEL_DELTA === 0) {
+          this.deltaYLooksLikeTick++;
+        }
+      }
     } else if (isMacOS() && Math.abs(dy) === MAC_WHEEL_TICK_VALUE) {
       this.deltaYLooksLikeTick++;
+    }
+
+    if (this.estimatedTickSize === 0) {
+      this.estimatedTickSize = Math.abs(dy);
+    } else {
+      this.estimatedTickSize = gcd(Math.abs(dy), this.estimatedTickSize);
     }
   }
 
@@ -160,6 +186,15 @@ export class WheelClassifier {
       // Macs send trackpad scroll events at 60fps
       return { deviceType: 'mouse', reason: 'peakEventsPerSec' }
     }
+    // if (this.numEvents > 3 && this.estimatedTickSize > 66) {
+    //   // In Chromium, the "line height" used for scrolling is 100/3
+    //   // In Firefox, it's computed from the actual line height which is
+    //   // typically around 15-30px.
+    //   // If the tick size is more than 2 lines, it's likely reported
+    //   // at the line level by the OS instead of at the pixel level, indicating
+    //   // that it's a mouse.
+    //   return { deviceType: 'mouse', reason: 'estimatedTickSize' }
+    // }
     return { deviceType: 'trackpad', reason: 'default' }
   }
 
@@ -170,6 +205,7 @@ export class WheelClassifier {
   deltaYFractional: ${this.deltaYFractional}
   deltaModeNotPixels: ${this.deltaModeNotPixels}
   numEvents: ${this.numEvents}
-  peakEventsPerSec: ${this.peakEventsPerSec}`
+  peakEventsPerSec: ${this.peakEventsPerSec}
+  estimatedTickSize: ${this.estimatedTickSize}`
   }
 }

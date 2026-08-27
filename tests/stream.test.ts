@@ -2,15 +2,21 @@ import { describe, it } from 'vitest';
 import { runStreamTestCase, WheelStreamTestCase } from './stream_runner.js';
 
 import macTrackpadFixture from './fixtures/mac_trackpad.json';
+import macTrackpadSafariFixture from './fixtures/mac_trackpad_safari.json';
 import macLogiMouseFixture from './fixtures/mac_logi_mouse.json';
 import macLogiMouseNoTicksFixture from './fixtures/mac_logi_mouse_no_ticks.json';
 import macEvoluentMouseFixture from './fixtures/mac_evoluent_mouse.json';
 import thinkpadTrackpadFixture from './fixtures/thinkpad_trackpad.json';
+import dellTrackpadFixture from './fixtures/dell_trackpad.json';
+import dellEvoluentMouseFixture from './fixtures/dell_evoluent_mouse.json';
 
 
 describe('JSON Stream Tests', () => {
   it(`runs JSON stream test: ${macTrackpadFixture.name}`, () => {
     runStreamTestCase(macTrackpadFixture as WheelStreamTestCase);
+  });
+  it(`runs JSON stream test: ${macTrackpadSafariFixture.name}`, () => {
+    runStreamTestCase(macTrackpadSafariFixture as WheelStreamTestCase);
   });
   it(`runs JSON stream test: ${macLogiMouseFixture.name}`, () => {
     runStreamTestCase(macLogiMouseFixture as WheelStreamTestCase);
@@ -23,5 +29,11 @@ describe('JSON Stream Tests', () => {
   });
   it(`runs JSON stream test: ${thinkpadTrackpadFixture.name}`, () => {
     runStreamTestCase(thinkpadTrackpadFixture as WheelStreamTestCase);
+  });
+  it(`runs JSON stream test: ${dellTrackpadFixture.name}`, () => {
+    runStreamTestCase(dellTrackpadFixture as WheelStreamTestCase);
+  });
+  it(`runs JSON stream test: ${dellEvoluentMouseFixture.name}`, () => {
+    runStreamTestCase(dellEvoluentMouseFixture as WheelStreamTestCase);
   });
 });
