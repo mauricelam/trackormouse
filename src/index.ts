@@ -53,10 +53,49 @@ const MAC_WHEEL_TICK_VALUE = 4.000244140625;
 const CHROMIUM_MAC_TICK = 40;
 
 function gcd(a: number, b: number): number {
-    if (b === 0) {
-        return Math.abs(a);
-    }
-    return gcd(b, a % b);
+  if (b === 0) {
+    return Math.abs(a);
+  }
+  return gcd(b, a % b);
+}
+
+export interface ClassifierState {
+  /**
+   * Number of events that contains non-zero delta X.
+   */
+  deltaXEvents: number;
+  /**
+   * Number of events that contain both non-zero delta X and non-zero delta Y at the same time.
+   */
+  deltaXAndYEvents: number;
+  /**
+   * Number of events where the deltaY looks like a wheel tick.
+   */
+  deltaYLooksLikeTick: number;
+  /**
+   * Number of events where the deltaY contains non-integer values.
+   */
+  deltaYFractional: number;
+  /**
+   * Number of events where the deltaMode is not pixels.
+   */
+  deltaModeNotPixels: number;
+  /**
+   * Total number of accumulated events.
+   */
+  numEvents: number;
+  /**
+   * Peak number of events received within a 1-second window.
+   */
+  peakEventsPerSec: number;
+  /**
+   * Estimated tick size based on the events, assuming no acceleration curve is applied.
+   */
+  estimatedTickSize: number;
+  /**
+   * Minimum non-zero deltaY seen in the events.
+   */
+  minimumDeltaY: number;
 }
 
 /**
@@ -64,94 +103,77 @@ function gcd(a: number, b: number): number {
  */
 export class WheelClassifier {
 
-  /**
-   * Number of events that contains non-zero delta X.
-   */
-  deltaXEvents: number = 0;
-  /**
-   * Number of events that contain both non-zero delta X and non-zero delta Y at the same time.
-   */
-  deltaXAndYEvents: number = 0;
-  /**
-   * Number of events where the deltaY looks like a wheel tick.
-   */
-  deltaYLooksLikeTick: number = 0;
-  /**
-   * Number of events where the deltaY contains non-integer values.
-   */
-  deltaYFractional: number = 0;
-  /**
-   * Number of events where the deltaMode is not pixels.
-   */
-  deltaModeNotPixels: number = 0;
-  /**
-   * Total number of accumulated events.
-   */
-  numEvents: number = 0;
-  /**
-   * Peak number of events received within a 1-second window.
-   */
-  peakEventsPerSec: number = 0;
-  /**
-   * Estimated tick size based on the events, assuming no acceleration curve is applied.
-   */
-  estimatedTickSize: number = 0;
+  state: ClassifierState = {
+    deltaXEvents: 0,
+    deltaXAndYEvents: 0,
+    deltaYLooksLikeTick: 0,
+    deltaYFractional: 0,
+    deltaModeNotPixels: 0,
+    numEvents: 0,
+    peakEventsPerSec: 0,
+    estimatedTickSize: 0,
+    minimumDeltaY: 0,
+  };
 
   private timestamps: number[] = [];
 
   addEvent(e: WheelEvent) {
-    this.numEvents++;
+    this.state.numEvents++;
 
     const timestamp = e.timeStamp;
     this.timestamps.push(timestamp);
     while (this.timestamps.length > 0 && this.timestamps[0] <= timestamp - 1000) {
       this.timestamps.shift();
     }
-    if (this.timestamps.length > this.peakEventsPerSec) {
-      this.peakEventsPerSec = this.timestamps.length;
+    if (this.timestamps.length > this.state.peakEventsPerSec) {
+      this.state.peakEventsPerSec = this.timestamps.length;
     }
 
     // Reading `deltaMode` has the side-effect on Firefox to make it turn off
     // the pixel-reporting-by-default compatibility mode.
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1689127#c2
     if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) {
-      this.deltaModeNotPixels++;
+      this.state.deltaModeNotPixels++;
     }
 
     const dy = e.deltaY;
     const dx = e.deltaX;
 
     if (dx !== 0) {
-      this.deltaXEvents++;
+      this.state.deltaXEvents++;
     }
 
     if (dx !== 0 && dy !== 0) {
-      this.deltaXAndYEvents++;
+      this.state.deltaXAndYEvents++;
     }
 
     if (!Number.isInteger(dy)) {
-      this.deltaYFractional++;
+      this.state.deltaYFractional++;
     }
 
     if (isWindows() && Math.abs(dy) > 0) {
       if (isWebkitDescendant()) {
         const div = Math.abs(dy) / (100 / 3);
         if (Math.abs(Math.round(div) - div) < 1e-6) {
-          this.deltaYLooksLikeTick++;
+          this.state.deltaYLooksLikeTick++;
         }
       } else {
         if (Math.abs(dy) % WINDOWS_WHEEL_DELTA === 0) {
-          this.deltaYLooksLikeTick++;
+          this.state.deltaYLooksLikeTick++;
         }
       }
     } else if (isMacOS() && Math.abs(dy) === MAC_WHEEL_TICK_VALUE) {
-      this.deltaYLooksLikeTick++;
+      this.state.deltaYLooksLikeTick++;
     }
 
-    if (this.estimatedTickSize === 0) {
-      this.estimatedTickSize = Math.abs(dy);
+    if (this.state.estimatedTickSize === 0) {
+      this.state.estimatedTickSize = Math.abs(dy);
     } else {
-      this.estimatedTickSize = gcd(Math.abs(dy), this.estimatedTickSize);
+      this.state.estimatedTickSize = gcd(Math.abs(dy), this.state.estimatedTickSize);
+    }
+
+    if (dy !== 0) {
+      this.state.minimumDeltaY = this.state.minimumDeltaY > 0 ? Math.min(this.state.minimumDeltaY, Math.abs(dy)) : Math.abs(dy);
     }
   }
 
@@ -164,48 +186,48 @@ export class WheelClassifier {
   }
 
   inferDeviceTypeWithReason(): { deviceType: InputDevice; reason: string } | null {
-    if (this.numEvents === 0) {
+    if (this.state.numEvents === 0) {
       return null
     }
-    if (this.deltaModeNotPixels > 0) {
+    if (this.state.deltaModeNotPixels > 0) {
       return { deviceType: 'mouse', reason: 'deltaModeNotPixels' }
     }
-    if (this.deltaXAndYEvents > 0) {
+    if (this.state.deltaXAndYEvents > 0) {
       return { deviceType: 'trackpad', reason: 'deltaXAndYEvents' }
     }
-    if (this.deltaXEvents > 0) {
+    if (this.state.deltaXEvents > 0) {
       return { deviceType: 'trackpad', reason: 'deltaXEvents' }
     }
-    if (this.deltaYLooksLikeTick === this.numEvents) {
+    if (this.state.deltaYLooksLikeTick === this.state.numEvents) {
       return { deviceType: 'mouse', reason: 'deltaYLooksLikeTick' }
     }
-    if (isMacOS() && this.deltaYLooksLikeTick / this.numEvents > 0.1) {
-      return { deviceType: 'mouse', reason: 'deltaYLooksLikeTickMac'}
+    if (isMacOS() && this.state.deltaYLooksLikeTick / this.state.numEvents > 0.1) {
+      return { deviceType: 'mouse', reason: 'deltaYLooksLikeTickMac' }
     }
-    if (isMacOS() && this.peakEventsPerSec <= 9) {
+    if (isMacOS() && this.state.peakEventsPerSec <= 9) {
       // Macs send trackpad scroll events at 60fps
       return { deviceType: 'mouse', reason: 'peakEventsPerSec' }
     }
-    // if (this.numEvents > 3 && this.estimatedTickSize > 66) {
-    //   // In Chromium, the "line height" used for scrolling is 100/3
-    //   // In Firefox, it's computed from the actual line height which is
-    //   // typically around 15-30px.
-    //   // If the tick size is more than 2 lines, it's likely reported
-    //   // at the line level by the OS instead of at the pixel level, indicating
-    //   // that it's a mouse.
-    //   return { deviceType: 'mouse', reason: 'estimatedTickSize' }
-    // }
+    if (this.state.numEvents > 3 && this.state.estimatedTickSize > 66) {
+      // In Chromium, the "line height" used for scrolling is 100/3
+      // In Firefox, it's computed from the actual line height which is
+      // typically around 15-30px.
+      // If the tick size is more than 2 lines, it's likely reported
+      // at the line level by the OS instead of at the pixel level, indicating
+      // that it's a mouse.
+      return { deviceType: 'mouse', reason: 'estimatedTickSize' }
+    }
+    if (isMacOS() && this.state.minimumDeltaY > 8) {
+      return { deviceType: 'mouse', reason: 'minimumDeltaY' }
+    }
     return { deviceType: 'trackpad', reason: 'default' }
   }
 
   debugString(): string {
-    return `  deltaXEvents: ${this.deltaXEvents}
-  deltaXAndYEvents: ${this.deltaXAndYEvents}
-  deltaYLooksLikeTick: ${this.deltaYLooksLikeTick}
-  deltaYFractional: ${this.deltaYFractional}
-  deltaModeNotPixels: ${this.deltaModeNotPixels}
-  numEvents: ${this.numEvents}
-  peakEventsPerSec: ${this.peakEventsPerSec}
-  estimatedTickSize: ${this.estimatedTickSize}`
+    let str = ''
+    for (const key in this.state) {
+      str += `  ${key}: ${this.state[key as keyof ClassifierState]}\n`
+    }
+    return str
   }
 }

@@ -1,39 +1,94 @@
-import { describe, it } from 'vitest';
-import { runStreamTestCase, WheelStreamTestCase } from './stream_runner.js';
+import { describe, it, afterAll } from 'vitest';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { expect } from 'vitest';
+import { WheelClassifier, InputDevice } from '../src/index.js';
+import { stubChromiumMacOS, stubChromiumWindows, stubGenericBrowser } from './browser_stub.js';
 
-import macTrackpadFixture from './fixtures/mac_trackpad.json';
-import macTrackpadSafariFixture from './fixtures/mac_trackpad_safari.json';
-import macLogiMouseFixture from './fixtures/mac_logi_mouse.json';
-import macLogiMouseNoTicksFixture from './fixtures/mac_logi_mouse_no_ticks.json';
-import macEvoluentMouseFixture from './fixtures/mac_evoluent_mouse.json';
-import thinkpadTrackpadFixture from './fixtures/thinkpad_trackpad.json';
-import dellTrackpadFixture from './fixtures/dell_trackpad.json';
-import dellEvoluentMouseFixture from './fixtures/dell_evoluent_mouse.json';
+export interface WheelEventData {
+  deltaX?: number;
+  deltaY?: number;
+  deltaMode?: number;
+  timeStamp?: number;
+}
 
+export interface WheelStreamTestCase {
+  name: string;
+  ignore?: boolean;
+  platform?: 'macOS' | 'Windows';
+  events: WheelEventData[];
+  expectedDeviceType: InputDevice | null;
+}
+
+export function createWheelEventFromData(data: WheelEventData): WheelEvent {
+  const { timeStamp, ...wheelInit } = data;
+  const evt = new WheelEvent('wheel', {
+    deltaX: 0,
+    deltaY: 0,
+    deltaMode: 0,
+    ...wheelInit,
+  });
+  if (timeStamp !== undefined) {
+    Object.defineProperty(evt, 'timeStamp', {
+      value: timeStamp,
+      writable: false,
+      configurable: true,
+      enumerable: true,
+    });
+  }
+  return evt;
+}
+
+// Load all JSON files in ./fixtures dynamically
+const fixtures = import.meta.glob('./fixtures/*.json', {
+  eager: true,
+  import: 'default',
+}) as Record<string, WheelStreamTestCase>;
 
 describe('JSON Stream Tests', () => {
-  it(`runs JSON stream test: ${macTrackpadFixture.name}`, () => {
-    runStreamTestCase(macTrackpadFixture as WheelStreamTestCase);
-  });
-  it(`runs JSON stream test: ${macTrackpadSafariFixture.name}`, () => {
-    runStreamTestCase(macTrackpadSafariFixture as WheelStreamTestCase);
-  });
-  it(`runs JSON stream test: ${macLogiMouseFixture.name}`, () => {
-    runStreamTestCase(macLogiMouseFixture as WheelStreamTestCase);
-  });
-  it(`runs JSON stream test: ${macLogiMouseNoTicksFixture.name}`, () => {
-    runStreamTestCase(macLogiMouseNoTicksFixture as WheelStreamTestCase);
-  });
-  it(`runs JSON stream test: ${macEvoluentMouseFixture.name}`, () => {
-    runStreamTestCase(macEvoluentMouseFixture as WheelStreamTestCase);
-  });
-  it(`runs JSON stream test: ${thinkpadTrackpadFixture.name}`, () => {
-    runStreamTestCase(thinkpadTrackpadFixture as WheelStreamTestCase);
-  });
-  it(`runs JSON stream test: ${dellTrackpadFixture.name}`, () => {
-    runStreamTestCase(dellTrackpadFixture as WheelStreamTestCase);
-  });
-  it(`runs JSON stream test: ${dellEvoluentMouseFixture.name}`, () => {
-    runStreamTestCase(dellEvoluentMouseFixture as WheelStreamTestCase);
+  const results: Record<string, any> = {};
+
+  for (const [filePath, testCase] of Object.entries(fixtures)) {
+    it(`Test Fixture: ${testCase.name} (${filePath})`, () => {
+      if (testCase.platform === 'macOS') {
+        stubChromiumMacOS();
+      } else if (testCase.platform === 'Windows') {
+        stubChromiumWindows();
+      } else {
+        stubGenericBrowser();
+      }
+
+      const classifier = new WheelClassifier();
+      for (const [i, eventData] of testCase.events.entries()) {
+        const evt = createWheelEventFromData(eventData);
+        classifier.addEvent(evt);
+        if (i >= 3) {
+          // Assert that the device type is correctly inferred after 3 events
+          const inferred = classifier.inferDeviceTypeWithReason();
+          if (!testCase.ignore) {
+            expect(inferred!!.deviceType, `Reason: ${inferred!!.reason}\n${classifier.debugString()}`)
+              .toBe(testCase.expectedDeviceType);
+          }
+        }
+      }
+
+      const inferred = classifier.inferDeviceTypeWithReason();
+      if (!testCase.ignore) {
+        expect(inferred!!.deviceType, `Reason: ${inferred!!.reason}\n${classifier.debugString()}`)
+          .toBe(testCase.expectedDeviceType);
+      }
+      results[filePath] = {
+        name: testCase.name,
+        expectedDeviceType: testCase.expectedDeviceType,
+        inferredDeviceType: inferred?.deviceType ?? null,
+        reason: inferred?.reason ?? null,
+        classifierState: classifier.state,
+      };
+    });
+  }
+
+  afterAll(() => {
+    const outputPath = path.resolve(__dirname, 'fixture_result.json');
+    fs.writeFileSync(outputPath, JSON.stringify(results, null, 2), 'utf-8');
   });
 });

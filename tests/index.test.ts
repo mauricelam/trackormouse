@@ -59,7 +59,7 @@ describe('WheelClassifier', () => {
         classifier.addEvent(createWheelEvent({ deltaY: dy, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
       }
 
-      expect(classifier.numEvents).toBe(6);
+      expect(classifier.state.numEvents).toBe(6);
       expect(classifier.inferDeviceType(), classifier.debugString()).toBe('mouse');
     });
 
@@ -72,7 +72,7 @@ describe('WheelClassifier', () => {
         classifier.addEvent(createWheelEvent({ deltaY: dy, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
       }
 
-      expect(classifier.numEvents).toBe(7);
+      expect(classifier.state.numEvents).toBe(7);
       expect(classifier.inferDeviceType(), classifier.debugString()).toBe('mouse');
     });
 
@@ -90,9 +90,9 @@ describe('WheelClassifier', () => {
         classifier.addEvent(createWheelEvent({ deltaX: dx, deltaY: dy, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
       }
 
-      expect(classifier.numEvents).toBe(3);
-      expect(classifier.deltaXEvents).toBe(3);
-      expect(classifier.deltaXAndYEvents).toBe(0);
+      expect(classifier.state.numEvents).toBe(3);
+      expect(classifier.state.deltaXEvents).toBe(3);
+      expect(classifier.state.deltaXAndYEvents).toBe(0);
       expect(classifier.inferDeviceType(), classifier.debugString()).toBe('trackpad');
     });
 
@@ -101,8 +101,8 @@ describe('WheelClassifier', () => {
       const event = createWheelEvent({ deltaX: 10, deltaY: 20, deltaMode: WheelEvent.DOM_DELTA_PIXEL });
       classifier.addEvent(event);
 
-      expect(classifier.deltaXEvents).toBe(1);
-      expect(classifier.deltaXAndYEvents).toBe(1);
+      expect(classifier.state.deltaXEvents).toBe(1);
+      expect(classifier.state.deltaXAndYEvents).toBe(1);
       expect(classifier.inferDeviceType(), classifier.debugString()).toBe('trackpad');
     });
 
@@ -116,7 +116,7 @@ describe('WheelClassifier', () => {
         classifier.addEvent(createWheelEvent({ deltaY: dy, deltaX: 0, deltaMode: WheelEvent.DOM_DELTA_PIXEL }));
       }
 
-      expect(classifier.numEvents).toBe(deltas.length);
+      expect(classifier.state.numEvents).toBe(deltas.length);
       expect(classifier.inferDeviceType(), classifier.debugString()).toBe('trackpad');
     });
   });
@@ -130,20 +130,20 @@ describe('WheelClassifier', () => {
       for (let i = 0; i < 5; i++) {
         classifier.addEvent(createWheelEvent({ deltaY: 120, timeStamp: baseTime }));
       }
-      expect(classifier.peakEventsPerSec).toBe(5);
+      expect(classifier.state.peakEventsPerSec).toBe(5);
 
       // Send 10 events at time 1500ms (window: 1000ms..1500ms has 15 events)
       for (let i = 0; i < 10; i++) {
         classifier.addEvent(createWheelEvent({ deltaY: 120, timeStamp: baseTime + 500 }));
       }
-      expect(classifier.peakEventsPerSec).toBe(15);
+      expect(classifier.state.peakEventsPerSec).toBe(15);
 
       // Send 2 events at time 2500ms (1000ms event expired, window: 1500ms..2500ms has 10 + 2 = 12 events)
       for (let i = 0; i < 2; i++) {
         classifier.addEvent(createWheelEvent({ deltaY: 120, timeStamp: baseTime + 1500 }));
       }
       // Peak remains 15
-      expect(classifier.peakEventsPerSec).toBe(15);
+      expect(classifier.state.peakEventsPerSec).toBe(15);
     });
   });
 });
