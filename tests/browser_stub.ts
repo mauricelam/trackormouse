@@ -23,3 +23,24 @@ export function stubGenericBrowser() {
         platform: 'Unknown',
     });
 }
+
+function getPlatform(userAgentString: string): string {
+    if (userAgentString.includes('Mac')) {
+        return 'macOS'
+    } else if (userAgentString.includes('Windows')) {
+        return 'Windows'
+    } else if (userAgentString.includes('Linux')) {
+        return 'Linux'
+    } else {
+        return 'Unknown'
+    }
+}
+
+export function stubBrowserUserAgent(userAgentString: string) {
+    const platform = getPlatform(userAgentString);
+    vi.stubGlobal('navigator', {
+        userAgentData: { platform },
+        userAgent: userAgentString,
+        platform,
+    });
+}

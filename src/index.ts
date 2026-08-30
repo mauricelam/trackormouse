@@ -204,7 +204,7 @@ export class WheelClassifier {
     if (isMacOS() && this.state.deltaYLooksLikeTick / this.state.numEvents > 0.1) {
       return { deviceType: 'mouse', reason: 'deltaYLooksLikeTickMac' }
     }
-    if (isMacOS() && this.state.peakEventsPerSec <= 9) {
+    if (isMacOS() && this.state.numEvents > 3 && this.state.peakEventsPerSec <= 9) {
       // Macs send trackpad scroll events at 60fps
       return { deviceType: 'mouse', reason: 'peakEventsPerSec' }
     }

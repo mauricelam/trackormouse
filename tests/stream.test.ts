@@ -3,7 +3,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { expect } from 'vitest';
 import { WheelClassifier, InputDevice } from '../src/index.js';
-import { stubChromiumMacOS, stubChromiumWindows, stubGenericBrowser } from './browser_stub.js';
+import { stubBrowserUserAgent, stubChromiumMacOS, stubChromiumWindows, stubGenericBrowser } from './browser_stub.js';
 
 export interface WheelEventData {
   deltaX?: number;
@@ -15,7 +15,8 @@ export interface WheelEventData {
 export interface WheelStreamTestCase {
   name: string;
   ignore?: boolean;
-  platform?: 'macOS' | 'Windows';
+  userAgent: string;
+  platform: 'macOS' | 'Windows';
   events: WheelEventData[];
   expectedDeviceType: InputDevice | null;
 }
@@ -50,13 +51,7 @@ describe('JSON Stream Tests', () => {
 
   for (const [filePath, testCase] of Object.entries(fixtures)) {
     it(`Test Fixture: ${testCase.name} (${filePath})`, () => {
-      if (testCase.platform === 'macOS') {
-        stubChromiumMacOS();
-      } else if (testCase.platform === 'Windows') {
-        stubChromiumWindows();
-      } else {
-        stubGenericBrowser();
-      }
+      stubBrowserUserAgent(testCase.userAgent);
 
       const classifier = new WheelClassifier();
       for (const [i, eventData] of testCase.events.entries()) {
@@ -66,7 +61,7 @@ describe('JSON Stream Tests', () => {
           // Assert that the device type is correctly inferred after 3 events
           const inferred = classifier.inferDeviceTypeWithReason();
           if (!testCase.ignore) {
-            expect(inferred!!.deviceType, `Reason: ${inferred!!.reason}\n${classifier.debugString()}`)
+            expect(inferred!!.deviceType, `Step: ${i}. Reason: ${inferred!!.reason}\n${classifier.debugString()}`)
               .toBe(testCase.expectedDeviceType);
           }
         }

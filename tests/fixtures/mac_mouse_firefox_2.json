@@ -1,0 +1,24 @@
+{
+    "name": "Mac, Logi mouse, tick-on, Firefox",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:154.0) Gecko/20100101 Firefox/154.0",
+    "expectedDeviceType": "mouse",
+    "events": [
+        { "deltaX": 0, "deltaY": 16, "deltaMode": 0, "timeStamp": 829 },
+        { "deltaX": 0, "deltaY": 16, "deltaMode": 0, "timeStamp": 845 },
+        { "deltaX": 0, "deltaY": 64, "deltaMode": 0, "timeStamp": 861 },
+        { "deltaX": 0, "deltaY": 96, "deltaMode": 0, "timeStamp": 868 },
+        { "deltaX": 0, "deltaY": 112, "deltaMode": 0, "timeStamp": 890 },
+        { "deltaX": 0, "deltaY": 128, "deltaMode": 0, "timeStamp": 903 },
+        { "deltaX": 0, "deltaY": 16, "deltaMode": 0, "timeStamp": 1380 },
+        { "deltaX": 0, "deltaY": 16, "deltaMode": 0, "timeStamp": 1397 },
+        { "deltaX": 0, "deltaY": 64, "deltaMode": 0, "timeStamp": 1412 },
+        { "deltaX": 0, "deltaY": 96, "deltaMode": 0, "timeStamp": 1429 },
+        { "deltaX": 0, "deltaY": 112, "deltaMode": 0, "timeStamp": 1472 },
+        { "deltaX": 0, "deltaY": 16, "deltaMode": 0, "timeStamp": 2041 },
+        { "deltaX": 0, "deltaY": 16, "deltaMode": 0, "timeStamp": 2056 },
+        { "deltaX": 0, "deltaY": 80, "deltaMode": 0, "timeStamp": 2065 },
+        { "deltaX": 0, "deltaY": 96, "deltaMode": 0, "timeStamp": 2073 },
+        { "deltaX": 0, "deltaY": 112, "deltaMode": 0, "timeStamp": 2088 },
+        { "deltaX": 0, "deltaY": 128, "deltaMode": 0, "timeStamp": 2123 }
+    ]
+}

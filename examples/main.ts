@@ -28,7 +28,6 @@ function resetState() {
   }
   classifier = new WheelClassifier();
   pendingClear = true;
-  updateOutput();
 }
 
 function scheduleAutoReset() {
@@ -60,14 +59,14 @@ function updateOutput() {
   deviceBadge.className = `result-badge ${device}`;
   deviceText.textContent = device;
 
-  if (classifier.numEvents > 0) {
+  if (classifier.state.numEvents > 0) {
     reasonsList.innerHTML = `
-      <li>Total events: ${classifier.numEvents}</li>
-      <li>Peak events/sec: ${classifier.peakEventsPerSec}</li>
-      <li>Delta X events: ${classifier.deltaXEvents}</li>
-      <li>Delta Y looks like tick: ${classifier.deltaYLooksLikeTick}</li>
-      <li>Delta Y fractional: ${classifier.deltaYFractional}</li>
-      <li>Delta mode not pixels: ${classifier.deltaModeNotPixels}</li>
+      <li>Total events: ${classifier.state.numEvents}</li>
+      <li>Peak events/sec: ${classifier.state.peakEventsPerSec}</li>
+      <li>Delta X events: ${classifier.state.deltaXEvents}</li>
+      <li>Delta Y looks like tick: ${classifier.state.deltaYLooksLikeTick}</li>
+      <li>Delta Y fractional: ${classifier.state.deltaYFractional}</li>
+      <li>Delta mode not pixels: ${classifier.state.deltaModeNotPixels}</li>
     `;
   } else {
     reasonsList.innerHTML = '<li>No wheel events received yet</li>';
@@ -111,13 +110,15 @@ autoResetCheckbox.addEventListener('change', () => {
   if (!autoResetCheckbox.checked && autoResetTimer) {
     clearTimeout(autoResetTimer);
     autoResetTimer = null;
-  } else if (autoResetCheckbox.checked && classifier.numEvents > 0) {
+  } else if (autoResetCheckbox.checked && classifier.state.numEvents > 0) {
     scheduleAutoReset();
   }
 });
 
 resetBtn.addEventListener('click', () => {
   resetState();
+  updateOutput();
+  updateJsonOutput();
 });
 
 // Initialize

@@ -1,56 +1,5 @@
 {
-  "./fixtures/acer_swift_trackpad.json": {
-    "name": "Acer swift 16, Edge",
-    "expectedDeviceType": "trackpad",
-    "inferredDeviceType": "trackpad",
-    "reason": "default",
-    "classifierState": {
-      "deltaXEvents": 0,
-      "deltaXAndYEvents": 0,
-      "deltaYLooksLikeTick": 0,
-      "deltaYFractional": 0,
-      "deltaModeNotPixels": 0,
-      "numEvents": 45,
-      "peakEventsPerSec": 45,
-      "estimatedTickSize": 1,
-      "minimumDeltaY": 1
-    }
-  },
-  "./fixtures/dell_evoluent_mouse.json": {
-    "name": "Dell Inspiron, Evoluent VerticalMouse 4",
-    "expectedDeviceType": "mouse",
-    "inferredDeviceType": "mouse",
-    "reason": "deltaYLooksLikeTick",
-    "classifierState": {
-      "deltaXEvents": 0,
-      "deltaXAndYEvents": 0,
-      "deltaYLooksLikeTick": 29,
-      "deltaYFractional": 29,
-      "deltaModeNotPixels": 0,
-      "numEvents": 29,
-      "peakEventsPerSec": 15,
-      "estimatedTickSize": 166.666650390625,
-      "minimumDeltaY": 166.666650390625
-    }
-  },
-  "./fixtures/dell_trackpad.json": {
-    "name": "Dell Inspiron 13, built in trackpad",
-    "expectedDeviceType": "trackpad",
-    "inferredDeviceType": "trackpad",
-    "reason": "default",
-    "classifierState": {
-      "deltaXEvents": 0,
-      "deltaXAndYEvents": 0,
-      "deltaYLooksLikeTick": 0,
-      "deltaYFractional": 0,
-      "deltaModeNotPixels": 0,
-      "numEvents": 94,
-      "peakEventsPerSec": 40,
-      "estimatedTickSize": 1,
-      "minimumDeltaY": 1
-    }
-  },
-  "./fixtures/imac_magic_mouse.json": {
+  "./fixtures/mac_magic_mouse_safari.json": {
     "name": "iMac, Magic Mouse",
     "expectedDeviceType": "mouse",
     "inferredDeviceType": "trackpad",
@@ -67,109 +16,7 @@
       "minimumDeltaY": 1
     }
   },
-  "./fixtures/lenovo_ideapad.json": {
-    "name": "Lenovo Ideapad trackpad, Edge",
-    "expectedDeviceType": "trackpad",
-    "inferredDeviceType": "trackpad",
-    "reason": "default",
-    "classifierState": {
-      "deltaXEvents": 0,
-      "deltaXAndYEvents": 0,
-      "deltaYLooksLikeTick": 0,
-      "deltaYFractional": 0,
-      "deltaModeNotPixels": 0,
-      "numEvents": 61,
-      "peakEventsPerSec": 32,
-      "estimatedTickSize": 1,
-      "minimumDeltaY": 1
-    }
-  },
-  "./fixtures/lenovo_ideapad_slim.json": {
-    "name": "Lenovo Ideapad Slim 3x",
-    "expectedDeviceType": "trackpad",
-    "inferredDeviceType": "trackpad",
-    "reason": "default",
-    "classifierState": {
-      "deltaXEvents": 0,
-      "deltaXAndYEvents": 0,
-      "deltaYLooksLikeTick": 0,
-      "deltaYFractional": 0,
-      "deltaModeNotPixels": 0,
-      "numEvents": 41,
-      "peakEventsPerSec": 39,
-      "estimatedTickSize": 1,
-      "minimumDeltaY": 1
-    }
-  },
-  "./fixtures/lg_gram_trackpad.json": {
-    "name": "LG gram 16, Edge",
-    "expectedDeviceType": "trackpad",
-    "inferredDeviceType": "trackpad",
-    "reason": "default",
-    "classifierState": {
-      "deltaXEvents": 0,
-      "deltaXAndYEvents": 0,
-      "deltaYLooksLikeTick": 0,
-      "deltaYFractional": 0,
-      "deltaModeNotPixels": 0,
-      "numEvents": 51,
-      "peakEventsPerSec": 40,
-      "estimatedTickSize": 1,
-      "minimumDeltaY": 1
-    }
-  },
-  "./fixtures/mac_evoluent_mouse.json": {
-    "name": "Mac, Evoluent VerticalMouse 4",
-    "expectedDeviceType": "mouse",
-    "inferredDeviceType": "mouse",
-    "reason": "deltaYLooksLikeTickMac",
-    "classifierState": {
-      "deltaXEvents": 0,
-      "deltaXAndYEvents": 0,
-      "deltaYLooksLikeTick": 8,
-      "deltaYFractional": 53,
-      "deltaModeNotPixels": 0,
-      "numEvents": 53,
-      "peakEventsPerSec": 21,
-      "estimatedTickSize": 0.0006103515625,
-      "minimumDeltaY": 4.000244140625
-    }
-  },
-  "./fixtures/mac_evoluent_mouse_2.json": {
-    "name": "Macbook Pro M1, Evoluent VerticalMouse4, Chrome (MOS installed, https://mos.caldis.me/)",
-    "expectedDeviceType": "mouse",
-    "inferredDeviceType": "mouse",
-    "reason": "minimumDeltaY",
-    "classifierState": {
-      "deltaXEvents": 0,
-      "deltaXAndYEvents": 0,
-      "deltaYLooksLikeTick": 0,
-      "deltaYFractional": 0,
-      "deltaModeNotPixels": 0,
-      "numEvents": 31,
-      "peakEventsPerSec": 31,
-      "estimatedTickSize": 1,
-      "minimumDeltaY": 13
-    }
-  },
-  "./fixtures/mac_logi_mouse.json": {
-    "name": "Mac, Logi MX Master 3 mouse, wheel ticks enabled",
-    "expectedDeviceType": "mouse",
-    "inferredDeviceType": "mouse",
-    "reason": "deltaYLooksLikeTickMac",
-    "classifierState": {
-      "deltaXEvents": 0,
-      "deltaXAndYEvents": 0,
-      "deltaYLooksLikeTick": 3,
-      "deltaYFractional": 23,
-      "deltaModeNotPixels": 0,
-      "numEvents": 23,
-      "peakEventsPerSec": 8,
-      "estimatedTickSize": 0.0006103515625,
-      "minimumDeltaY": 4.000244140625
-    }
-  },
-  "./fixtures/mac_logi_mouse_no_ticks.json": {
+  "./fixtures/mac_mouse_chrome.json": {
     "name": "Mac, Logi MX Master 3 mouse, wheel ticks disabled",
     "expectedDeviceType": "mouse",
     "inferredDeviceType": "mouse",
@@ -186,7 +33,92 @@
       "minimumDeltaY": 4.000244140625
     }
   },
-  "./fixtures/mac_trackpad.json": {
+  "./fixtures/mac_mouse_chrome_2.json": {
+    "name": "Mac, Logi MX Master 3 mouse, wheel ticks enabled",
+    "expectedDeviceType": "mouse",
+    "inferredDeviceType": "mouse",
+    "reason": "deltaYLooksLikeTickMac",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 3,
+      "deltaYFractional": 23,
+      "deltaModeNotPixels": 0,
+      "numEvents": 23,
+      "peakEventsPerSec": 8,
+      "estimatedTickSize": 0.0006103515625,
+      "minimumDeltaY": 4.000244140625
+    }
+  },
+  "./fixtures/mac_mouse_chrome_3.json": {
+    "name": "Mac, Evoluent VerticalMouse 4",
+    "expectedDeviceType": "mouse",
+    "inferredDeviceType": "mouse",
+    "reason": "deltaYLooksLikeTickMac",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 8,
+      "deltaYFractional": 53,
+      "deltaModeNotPixels": 0,
+      "numEvents": 53,
+      "peakEventsPerSec": 21,
+      "estimatedTickSize": 0.0006103515625,
+      "minimumDeltaY": 4.000244140625
+    }
+  },
+  "./fixtures/mac_mouse_chrome_4.json": {
+    "name": "Macbook Pro M1, Evoluent VerticalMouse4, Chrome (MOS installed, https://mos.caldis.me/)",
+    "expectedDeviceType": "mouse",
+    "inferredDeviceType": "mouse",
+    "reason": "minimumDeltaY",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 31,
+      "peakEventsPerSec": 31,
+      "estimatedTickSize": 1,
+      "minimumDeltaY": 13
+    }
+  },
+  "./fixtures/mac_mouse_firefox.json": {
+    "name": "Mac, logi mouse, no-tick, Firefox",
+    "expectedDeviceType": "mouse",
+    "inferredDeviceType": "mouse",
+    "reason": "minimumDeltaY",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 21,
+      "peakEventsPerSec": 14,
+      "estimatedTickSize": 16,
+      "minimumDeltaY": 16
+    }
+  },
+  "./fixtures/mac_mouse_firefox_2.json": {
+    "name": "Mac, Logi mouse, tick-on, Firefox",
+    "expectedDeviceType": "mouse",
+    "inferredDeviceType": "mouse",
+    "reason": "minimumDeltaY",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 17,
+      "peakEventsPerSec": 11,
+      "estimatedTickSize": 16,
+      "minimumDeltaY": 16
+    }
+  },
+  "./fixtures/mac_trackpad_chrome.json": {
     "name": "Macbook Air M3, built-in trackpad",
     "expectedDeviceType": "trackpad",
     "inferredDeviceType": "trackpad",
@@ -203,7 +135,7 @@
       "minimumDeltaY": 1
     }
   },
-  "./fixtures/mac_trackpad_2.json": {
+  "./fixtures/mac_trackpad_chrome_2.json": {
     "name": "Macbook Pro M1, built-in trackpad, Chrome",
     "expectedDeviceType": "trackpad",
     "inferredDeviceType": "trackpad",
@@ -216,6 +148,23 @@
       "deltaModeNotPixels": 0,
       "numEvents": 67,
       "peakEventsPerSec": 51,
+      "estimatedTickSize": 1,
+      "minimumDeltaY": 1
+    }
+  },
+  "./fixtures/mac_trackpad_firefox.json": {
+    "name": "Macbook Air M3, trackpad, Firefox",
+    "expectedDeviceType": "trackpad",
+    "inferredDeviceType": "trackpad",
+    "reason": "deltaXAndYEvents",
+    "classifierState": {
+      "deltaXEvents": 48,
+      "deltaXAndYEvents": 46,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 70,
+      "peakEventsPerSec": 38,
       "estimatedTickSize": 1,
       "minimumDeltaY": 1
     }
@@ -237,7 +186,75 @@
       "minimumDeltaY": 1
     }
   },
-  "./fixtures/surface_pro_trackpad.json": {
+  "./fixtures/win_mouse_chrome.json": {
+    "name": "Dell Inspiron, Evoluent VerticalMouse 4",
+    "expectedDeviceType": "mouse",
+    "inferredDeviceType": "mouse",
+    "reason": "deltaYLooksLikeTick",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 29,
+      "deltaYFractional": 29,
+      "deltaModeNotPixels": 0,
+      "numEvents": 29,
+      "peakEventsPerSec": 15,
+      "estimatedTickSize": 166.666650390625,
+      "minimumDeltaY": 166.666650390625
+    }
+  },
+  "./fixtures/win_trackpad_chrome.json": {
+    "name": "Lenovo Thinkpad X1, built-in trackpad",
+    "expectedDeviceType": "trackpad",
+    "inferredDeviceType": "trackpad",
+    "reason": "default",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 71,
+      "peakEventsPerSec": 41,
+      "estimatedTickSize": 1,
+      "minimumDeltaY": 1
+    }
+  },
+  "./fixtures/win_trackpad_chrome_2.json": {
+    "name": "Dell Inspiron 13, built in trackpad",
+    "expectedDeviceType": "trackpad",
+    "inferredDeviceType": "trackpad",
+    "reason": "default",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 94,
+      "peakEventsPerSec": 40,
+      "estimatedTickSize": 1,
+      "minimumDeltaY": 1
+    }
+  },
+  "./fixtures/win_trackpad_edge.json": {
+    "name": "Acer swift 16, Edge",
+    "expectedDeviceType": "trackpad",
+    "inferredDeviceType": "trackpad",
+    "reason": "default",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 45,
+      "peakEventsPerSec": 45,
+      "estimatedTickSize": 1,
+      "minimumDeltaY": 1
+    }
+  },
+  "./fixtures/win_trackpad_edge_2.json": {
     "name": "Surface Pro 13, Edge",
     "expectedDeviceType": "trackpad",
     "inferredDeviceType": "trackpad",
@@ -254,8 +271,8 @@
       "minimumDeltaY": 1
     }
   },
-  "./fixtures/thinkpad_trackpad.json": {
-    "name": "Lenovo Thinkpad X1, built-in trackpad",
+  "./fixtures/win_trackpad_edge_3.json": {
+    "name": "LG gram 16, Edge",
     "expectedDeviceType": "trackpad",
     "inferredDeviceType": "trackpad",
     "reason": "default",
@@ -265,8 +282,42 @@
       "deltaYLooksLikeTick": 0,
       "deltaYFractional": 0,
       "deltaModeNotPixels": 0,
-      "numEvents": 71,
-      "peakEventsPerSec": 41,
+      "numEvents": 51,
+      "peakEventsPerSec": 40,
+      "estimatedTickSize": 1,
+      "minimumDeltaY": 1
+    }
+  },
+  "./fixtures/win_trackpad_edge_4.json": {
+    "name": "Lenovo Ideapad trackpad, Edge",
+    "expectedDeviceType": "trackpad",
+    "inferredDeviceType": "trackpad",
+    "reason": "default",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 61,
+      "peakEventsPerSec": 32,
+      "estimatedTickSize": 1,
+      "minimumDeltaY": 1
+    }
+  },
+  "./fixtures/win_trackpad_edge_5.json": {
+    "name": "Lenovo Ideapad Slim 3x",
+    "expectedDeviceType": "trackpad",
+    "inferredDeviceType": "trackpad",
+    "reason": "default",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 41,
+      "peakEventsPerSec": 39,
       "estimatedTickSize": 1,
       "minimumDeltaY": 1
     }
