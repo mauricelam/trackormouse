@@ -1,5 +1,5 @@
 {
-  "name": "trackormouse",
+  "name": "@mauricelam/trackormouse",
   "version": "1.0.0",
   "description": "Detect mouse wheel vs trackpad input",
   "type": "module",
