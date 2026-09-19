@@ -203,6 +203,74 @@
       "minimumDeltaY": 166.666650390625
     }
   },
+  "./fixtures/win_mouse_edge.json": {
+    "name": "Edge on windows, mouse",
+    "expectedDeviceType": "mouse",
+    "inferredDeviceType": "mouse",
+    "reason": "deltaYLooksLikeTick",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 10,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 10,
+      "peakEventsPerSec": 10,
+      "estimatedTickSize": 100,
+      "minimumDeltaY": 100
+    }
+  },
+  "./fixtures/win_mouse_edge_2.json": {
+    "name": "Edge on Windows, mouse",
+    "expectedDeviceType": "mouse",
+    "inferredDeviceType": "mouse",
+    "reason": "deltaYLooksLikeTick",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 17,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 17,
+      "peakEventsPerSec": 15,
+      "estimatedTickSize": 100,
+      "minimumDeltaY": 100
+    }
+  },
+  "./fixtures/win_mouse_firefox.json": {
+    "name": "Firefox on Windows, mouse",
+    "expectedDeviceType": "mouse",
+    "inferredDeviceType": "mouse",
+    "reason": "estimatedTickSize",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 22,
+      "peakEventsPerSec": 12,
+      "estimatedTickSize": 102,
+      "minimumDeltaY": 102
+    }
+  },
+  "./fixtures/win_mouse_firefox_2.json": {
+    "name": "Firefox on Windows, mouse",
+    "expectedDeviceType": "mouse",
+    "inferredDeviceType": "mouse",
+    "reason": "estimatedTickSize",
+    "classifierState": {
+      "deltaXEvents": 0,
+      "deltaXAndYEvents": 0,
+      "deltaYLooksLikeTick": 0,
+      "deltaYFractional": 0,
+      "deltaModeNotPixels": 0,
+      "numEvents": 17,
+      "peakEventsPerSec": 12,
+      "estimatedTickSize": 102,
+      "minimumDeltaY": 102
+    }
+  },
   "./fixtures/win_trackpad_chrome.json": {
     "name": "Lenovo Thinkpad X1, built-in trackpad",
     "expectedDeviceType": "trackpad",

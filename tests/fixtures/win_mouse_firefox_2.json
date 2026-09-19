@@ -1,0 +1,24 @@
+{
+    "name": "Firefox on Windows, mouse",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0",
+    "expectedDeviceType": "mouse",
+    "events": [
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 36689 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 36736 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 36767 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 36798 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 36845 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 37283 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 37298 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 37330 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 37345 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 37361 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 37408 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 37923 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 37955 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 37970 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 37986 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 38001 },
+        { "deltaX": 0, "deltaY": 102, "deltaMode": 0, "timeStamp": 38033 }
+    ]
+}

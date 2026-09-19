@@ -1,0 +1,25 @@
+{
+    "name": "Edge on Windows, mouse",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0",
+    "platform": "Windows",
+    "expectedDeviceType": "mouse",
+    "events": [
+        { "deltaX": 0, "deltaY": -100, "deltaMode": 0, "timeStamp": 505.30000000074506 },
+        { "deltaX": 0, "deltaY": -100, "deltaMode": 0, "timeStamp": 553.3000000007451 },
+        { "deltaX": 0, "deltaY": -100, "deltaMode": 0, "timeStamp": 577.2000000011176 },
+        { "deltaX": 0, "deltaY": -100, "deltaMode": 0, "timeStamp": 601.2000000011176 },
+        { "deltaX": 0, "deltaY": -100, "deltaMode": 0, "timeStamp": 657.3000000007451 },
+        { "deltaX": 0, "deltaY": -100, "deltaMode": 0, "timeStamp": 1017.2000000011176 },
+        { "deltaX": 0, "deltaY": -100, "deltaMode": 0, "timeStamp": 1033.300000000745 },
+        { "deltaX": 0, "deltaY": -100, "deltaMode": 0, "timeStamp": 1049 },
+        { "deltaX": 0, "deltaY": -100, "deltaMode": 0, "timeStamp": 1065.1000000014901 },
+        { "deltaX": 0, "deltaY": -100, "deltaMode": 0, "timeStamp": 1105.1000000014901 },
+        { "deltaX": 0, "deltaY": 100, "deltaMode": 0, "timeStamp": 1457.300000000745 },
+        { "deltaX": 0, "deltaY": 100, "deltaMode": 0, "timeStamp": 1465.300000000745 },
+        { "deltaX": 0, "deltaY": 100, "deltaMode": 0, "timeStamp": 1481.2000000011176 },
+        { "deltaX": 0, "deltaY": 100, "deltaMode": 0, "timeStamp": 1497.2000000011176 },
+        { "deltaX": 0, "deltaY": 100, "deltaMode": 0, "timeStamp": 1512.9000000003725 },
+        { "deltaX": 0, "deltaY": 100, "deltaMode": 0, "timeStamp": 1537.1000000014901 },
+        { "deltaX": 0, "deltaY": 100, "deltaMode": 0, "timeStamp": 1585.1000000014901 }
+    ]
+}
