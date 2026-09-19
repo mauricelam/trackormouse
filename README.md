@@ -1,5 +1,7 @@
 # trackormouse
 
+[![npm](https://img.shields.io/npm/v/@mauricelam/trackormouse.svg)](https://www.npmjs.com/package/@mauricelam/trackormouse)
+
 A library for detecting whether the current input is from a physical mouse or trackpad based on javascript wheel events.
 
 Since browsers do not provide a direct API signal indicating the type of pointing device, this library uses heuristics to determine that.
